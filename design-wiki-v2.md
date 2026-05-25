@@ -27,7 +27,7 @@ The current wiki schema (llm-wiki-schema.md) places the entire routing, ownershi
 
 ## Design Goals
 
-1. **CLAUDE.md is a command list, nothing more.** ~50 lines. Repeatable processes the agent can execute. All knowledge lives in the wiki itself.
+1. **Control files are small and focused.** CLAUDE.md (~35 lines) is commands only. meta/schema.md defines page structure. POLICY.md defines coherence. Each is read only when needed. The most frequent operations (query, implement, test, run) read only CLAUDE.md.
 
 2. **Discovery is dynamic.** The agent navigates from prompt → root index.md → relevant indexes → frontmatter glob → assembled context. Context is loaded lazily based on what the task actually needs.
 
@@ -55,9 +55,17 @@ Layer 2: Wiki (LLM-maintained knowledge graph)
     |   descriptive: technology, guides, syntheses, design docs
     |   project: ADRs, tickets, plans, design docs, logs
     |
-Layer 3: CLAUDE.md (command dispatch table)
+Layer 3a: CLAUDE.md (command dispatch table)
     |   defines repeatable processes only
-    |   ~50 lines
+    |   ~35 lines
+    |
+Layer 3b: meta/schema.md (page structure reference)
+    |   page type formats, frontmatter spec, naming/linking conventions
+    |   ~500 lines, read on-demand when creating/editing pages
+    |
+Layer 3c: POLICY.md (coherence rules)
+    |   compliance contracts, drift policy, page kinds
+    |   human-owned
     |
 Layer 4: Agent (Claude Code session)
     |   reads CLAUDE.md → discovers context → executes operation
@@ -67,6 +75,18 @@ Layer 5: Code (actual implementation in repos)
     |   the agent acts on code using wiki knowledge
     |   code changes feed back as wiki observations
 ```
+
+### Three Control Files
+
+V1 puts everything in CLAUDE.md (~780 lines). V2 splits control into three files with distinct responsibilities:
+
+| File | Responsibility | Ownership | When to read |
+|------|---------------|-----------|--------------|
+| **CLAUDE.md** | Command dispatch, discovery entry point | shared | Every operation (always loaded) |
+| **meta/schema.md** | Page type formats, frontmatter spec, naming/linking conventions | human | When creating or editing pages |
+| **POLICY.md** | Coherence rules, compliance contracts, drift policy, page kinds | human | When performing lint, synthesize, or promote |
+
+The split principle: **CLAUDE.md** tells the agent *what it can do*. **meta/schema.md** tells the agent *what pages look like*. **POLICY.md** tells the agent *what coherence means*.
 
 ### CLAUDE.md — The Command Interface
 
@@ -102,13 +122,35 @@ Before writing any wiki page, check ownership in `meta/ownership.md`.
 - **llm**: agent owns, may create/edit/delete
 - **shared**: either party edits, agent flags changes for review
 
+## Schema
+
+Page formats, frontmatter specs, and naming conventions live in
+`meta/schema.md`. Read it when creating or editing wiki pages.
+
 ## Policy
 
 Compliance and coherence rules live in `POLICY.md`. Read it when
 performing lint, synthesize, or promote operations.
 ```
 
-That's it. ~30 lines. Everything else is discovered dynamically.
+That's it. ~35 lines. Everything else is discovered dynamically.
+
+### meta/schema.md — The Page Structure Reference
+
+meta/schema.md is the authoritative reference for page formats. It contains:
+
+- **Page type formats** — required sections for each page type (decision, pattern, adr, ticket, design-doc, plan, etc.)
+- **Frontmatter spec** — required and optional fields per page type
+- **Naming conventions** — file naming rules per directory
+- **Linking conventions** — wiki link format, orphan rules, citation rules
+
+**Ownership: human.** The agent never edits this file without explicit instruction. This ensures the agent cannot drift on what constitutes a valid page.
+
+**When to read:** Only when creating a new page or editing an existing page's structure. Not needed for queries, implements, tests, or runs — those operations work with page *content*, not page *format*.
+
+**Why not POLICY.md?** POLICY.md defines coherence (compliance contracts, drift categories, page kinds). Schema defines structure (what a valid decision page looks like). These are different concerns: a page can be structurally valid (passes schema) but incoherent (fails policy), or vice versa. Keeping them separate means the agent loads only what it needs.
+
+**Bootstrapping:** meta/schema.md solves the cold-start problem. A fresh wiki has an explicit format reference from day one — no need to learn from existing pages or seed examples.
 
 ### Discovery Chain
 
@@ -121,11 +163,13 @@ When the agent receives a user prompt:
 4. If project-scoped → read projects/<name>/index.md
 5. Glob frontmatter for kind/scope/applies_to matching the task
 6. Read matched pages → assemble working context
-7. Execute the operation
-8. Write observations back to wiki (log entries, updated pages)
+7. If creating/editing pages → read meta/schema.md for format
+8. If checking compliance → read POLICY.md for coherence rules
+9. Execute the operation
+10. Write observations back to wiki (log entries, updated pages)
 ```
 
-**Key property:** The agent reads only what the current task demands. A "lint project X" reads X's index and ADRs plus relevant normative tech pages. An "implement ticket COMP-042" reads the ticket, related ADRs, relevant patterns, and the project's architecture page — nothing else.
+**Key property:** The agent reads only what the current task demands. A "lint project X" reads X's index and ADRs plus POLICY.md plus relevant normative tech pages. An "implement ticket COMP-042" reads the ticket, related ADRs, relevant patterns, and the project's architecture page — nothing else. An "ingest" that creates new pages reads meta/schema.md for format, but a "query" reads neither schema.md nor POLICY.md.
 
 **Frontmatter as filter:** The agent uses `kind`, `scope`, `applies_to`, `status`, and `tags` to narrow results. Example: "find all normative pages that apply to Scala Native" translates to a glob for `kind: normative` + `applies_to.languages` containing `scala-native`.
 
@@ -254,6 +298,8 @@ A **ticket** says "do this one thing." It is an atomic work unit the agent can i
 
 ### Design Doc Format
 
+> **Note:** The formats below are shown here for design discussion. The operational home for all page type formats is `meta/schema.md`.
+
 ```yaml
 ---
 id: compositor-design-input-pipeline
@@ -337,29 +383,33 @@ What could go wrong.
 |------|-----|
 | Per-project CLAUDE.md | Single root CLAUDE.md only. Projects discovered via index. |
 | SHA-256 provenance hashes | File paths + timestamps + git history are sufficient. Agent cannot reliably compute hashes. |
-| Full schema in CLAUDE.md | Schema knowledge lives in wiki pages. CLAUDE.md is commands only. |
+| Full schema in CLAUDE.md | Schema split into three files: CLAUDE.md (commands), meta/schema.md (page formats), POLICY.md (coherence). |
 | Project CLAUDE.md template | Replaced by project index.md structure. |
 
 ### Changed
 
 | What | From | To |
 |------|------|-----|
-| CLAUDE.md size | ~780 lines (full schema) | ~30-50 lines (commands only) |
-| Context loading | Eager (read entire schema at start) | Lazy (discover via index → glob → read) |
+| CLAUDE.md size | ~780 lines (full schema) | ~35 lines (commands only) |
+| Schema location | All in CLAUDE.md | Three-way split: CLAUDE.md (~35 lines) + meta/schema.md (~500 lines) + POLICY.md |
+| Context loading | Eager (read entire schema at start) | Lazy (discover via index → glob → read; schema.md only when creating/editing pages) |
 | Source types | Documents only | Documents and code |
-| Operations | ingest, query, edit, lint, synthesize, promote, meta | + implement, test, run |
+| Operations | ingest, query, edit, lint, synthesize, promote, meta | + implement, test, run, ingest-external |
 | Project entry point | projects/*/CLAUDE.md | projects/*/index.md |
 
 ### Added
 
 | What | Purpose |
 |------|---------|
+| **meta/schema.md** | Explicit page format reference — page types, frontmatter spec, naming/linking conventions |
 | design-doc page type | Forward-looking architectural exploration |
 | plan page type | Work decomposition and sequencing |
 | sources/raw/code/ | Code repository pointers |
 | implement operation | Apply wiki knowledge to produce code |
 | test operation | Run tests, capture observations |
 | run operation | Execute system, observe behavior |
+| ingest-external operation | Create llm-wiki branch in forked external library |
+| external-lib page type | Pointer to forked library with llm-wiki branch |
 
 ### Retained (unchanged)
 
@@ -415,6 +465,7 @@ wiki/
 │   └── summaries/
 ├── syntheses/
 ├── meta/
+│   ├── schema.md                # NEW: page formats, frontmatter spec (human-owned)
 │   ├── ownership.md
 │   ├── drift.md
 │   ├── registry.md
@@ -478,22 +529,34 @@ Input: `run <project>` or `run <specific-component>`.
 
 ## Where the Schema Lives
 
-Currently the schema is in CLAUDE.md. In V2, the schema is distributed across wiki pages that the agent discovers as needed:
+Currently the schema is in CLAUDE.md (~780 lines). V2 splits it into three control files plus wiki-internal metadata:
 
-| Schema concern | Lives in |
-|----------------|----------|
-| Available commands | CLAUDE.md |
-| Ownership rules | meta/ownership.md |
-| Compliance/coherence | POLICY.md |
-| Page type formats | Learned from existing pages + this design doc |
-| Frontmatter spec | POLICY.md (required fields section) |
-| Naming conventions | POLICY.md |
-| Linking conventions | POLICY.md |
+| Schema concern | V1 location | V2 location |
+|----------------|-------------|-------------|
+| Available commands | CLAUDE.md | **CLAUDE.md** |
+| Ownership rules | CLAUDE.md | **meta/ownership.md** |
+| Page kinds (normative/descriptive/stub) | CLAUDE.md | **POLICY.md** |
+| Compliance contracts | CLAUDE.md | **POLICY.md** |
+| Drift policy | CLAUDE.md | **POLICY.md** |
+| Page type formats | CLAUDE.md | **meta/schema.md** |
+| Frontmatter spec | CLAUDE.md | **meta/schema.md** |
+| Naming conventions | CLAUDE.md | **meta/schema.md** |
+| Linking conventions | CLAUDE.md | **meta/schema.md** |
 
 The agent doesn't need to read all of these for every operation. It reads what it needs:
-- For **lint**: CLAUDE.md + POLICY.md + meta/ownership.md + target pages
-- For **implement**: CLAUDE.md + project index + relevant tech pages + ticket
-- For **query**: CLAUDE.md + index.md + discovered pages
+
+| Operation | Reads |
+|-----------|-------|
+| **query** | CLAUDE.md + index.md + discovered pages |
+| **implement** | CLAUDE.md + project index + relevant tech pages + ticket |
+| **ingest** | CLAUDE.md + index.md + meta/schema.md (to create summary/wiki pages) |
+| **edit** | CLAUDE.md + meta/schema.md + meta/ownership.md + target page |
+| **lint** | CLAUDE.md + POLICY.md + meta/schema.md + meta/ownership.md + target pages |
+| **synthesize** | CLAUDE.md + POLICY.md + meta/schema.md + scope pages |
+| **promote** | CLAUDE.md + POLICY.md + meta/schema.md + source/target pages |
+| **test** / **run** | CLAUDE.md + project index + architecture pages |
+
+Key insight: **query**, **implement**, **test**, and **run** — the most frequent operations — never need to read meta/schema.md or POLICY.md. Schema and policy are loaded only for operations that create/modify wiki structure or check compliance.
 
 ---
 
@@ -503,7 +566,7 @@ The agent doesn't need to read all of these for every operation. It reads what i
 
 2. **Code pointer freshness.** How often should sources/raw/code/ pointers be updated? Every session? On explicit ingest? When the agent notices a commit has changed?
 
-3. **Schema bootstrapping.** The agent needs to know page formats to create pages, but page formats are learned from existing pages. On a fresh wiki, where does the initial knowledge come from? Options: (a) seed pages in helpers/examples/, (b) a schema reference page in the wiki itself, (c) POLICY.md includes format specs.
+3. ~~**Schema bootstrapping.**~~ **Resolved.** meta/schema.md provides an explicit format reference from day one. No need to learn from existing pages or maintain seed examples.
 
 4. **Log verbosity.** How much should implement/test/run log? Too little loses the self-learning benefit. Too much makes logs unreadable. Suggested rule: log decisions, discoveries, and surprises — not routine operations.
 
@@ -513,12 +576,14 @@ The agent doesn't need to read all of these for every operation. It reads what i
 
 ## Implementation Plan
 
-Phase 1: Restructure CLAUDE.md and create root index.md
-Phase 2: Add design-doc and plan page types with examples
-Phase 3: Add sources/raw/code/ pointers for existing projects
-Phase 4: Define implement/test/run operations in POLICY.md
-Phase 5: Migrate existing content to new structure
-Phase 6: Test the discovery chain end-to-end
+Phase 1: Create meta/schema.md with all page type formats and frontmatter specs
+Phase 2: Restructure CLAUDE.md to ~35-line command dispatch, add schema/policy pointers
+Phase 3: Create root index.md
+Phase 4: Add design-doc and plan page types (formats already in schema.md)
+Phase 5: Add sources/raw/code/ pointers for existing projects
+Phase 6: Define implement/test/run operations (CLAUDE.md commands, not POLICY.md)
+Phase 7: Migrate existing content to new structure
+Phase 8: Test the discovery chain end-to-end
 
 ---
 
