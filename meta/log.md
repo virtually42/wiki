@@ -254,6 +254,83 @@ Refs: [[sources/summaries/throw_away_the_irrelevant_john_de_goes_podcast]],
 [[sources/summaries/functional_domain_modeling_zio2_debasish_ghosh]],
 [[tech/patterns/functional-domain-design]]
 
+## [2026-05-28] edit | Human closed DRIFT-012 (ownership.md formatting)
+
+Human deleted the orphan `**scratch/ is human**...` paragraph
+(lines 81–83) from `meta/ownership.md` — the leftover duplicate of
+the correctly-formed bullet at line 80. `meta/ownership.md` is
+human-owned; the agent flagged the issue in `meta/drift.md` but
+did not edit. `meta/drift.md` summary table updated and
+Notes-for-Human section narrowed to the two remaining items
+(DRIFT-011 deferred to the next project, DRIFT-013 informational).
+
+Refs: [[meta/ownership]], [[meta/drift]]
+
+## [2026-05-28] edit | Closed DRIFT-009 and DRIFT-010
+
+Per user instruction, applied the recommended remediations:
+
+- **DRIFT-009** — removed the `meta/registry.md` line from
+  `index.md`. No other page in the wiki referenced a registry
+  concept; the line was carried over from an earlier wiki shape.
+- **DRIFT-010** — created `tech/glossary.md` as a stub
+  (`kind: stub`, `status: stub`) so the schema's `glossary-entry`
+  location matches reality. No entries yet — populated on demand
+  when terms accumulate cross-page ambiguity. Both inbound
+  references (from `index.md` and `tech/index.md`) now resolve.
+
+DRIFT-011 was explained to the user but not yet remediated; left
+open in `meta/drift.md` until a remediation decision is made.
+DRIFT-012 (human-owned file) and DRIFT-013 (informational) remain
+open with no action expected.
+
+Updated `meta/drift.md` summary table: DRIFT-009 and DRIFT-010
+marked **resolved**; Notes-for-Human section narrowed to the three
+remaining items.
+
+Refs: [[meta/drift]], [[index]], [[tech/glossary]], [[tech/index]]
+
+## [2026-05-28] lint | Five new findings, compliance side still clean
+
+Ran lint against the wiki. Rewrote `meta/drift.md` with 5 findings —
+all post-reachability-work. Compliance side (missing-declaration,
+dangling-adoption, weak-rationale, conflicting-adoptions,
+unused-normative) remains clean: both accepted normative pages still
+have their compositor adopter and no new normative pages have landed.
+
+New findings:
+
+- **DRIFT-009** (low, dangling-link): `index.md` line 81 links to
+  `meta/registry.md`, which does not exist on disk. Likely carried
+  over from an earlier wiki shape; nothing else references a registry.
+- **DRIFT-010** (low, dangling-link): both `index.md` and
+  `tech/index.md` reference `tech/glossary.md`, which does not exist.
+  Schema (`meta/schema.md:21`) still lists `glossary-entry` as a
+  valid page type, so removing the references alone would leave the
+  schema describing a non-existent location.
+- **DRIFT-011** (low, content-frontmatter-contradiction):
+  `tech/patterns/functional-domain-design.md` §"Open Questions /
+  Drift Signals" claims no project ADR yet cites the page, while the
+  same file's `used_by` already lists the compositor adopter and the
+  previous drift report marked DRIFT-008 as resolved with this page
+  having one adopter.
+- **DRIFT-012** (low, formatting-glitch): `meta/ownership.md`
+  lines 81–83 contain an orphan paragraph restating the `scratch/`
+  bullet without a bullet marker — apparent edit remnant. File is
+  human-owned; surfaced for the human to fix.
+- **DRIFT-013** (informational, descriptive-used_by-empty):
+  `tech/stack/mill.md`, `tech/stack/kyo.md`, `tech/stack/airstream.md`
+  all have `used_by: []`, while `projects/compositor/index.md` §Stack
+  lists Mill and Kyo. The schema template includes `used_by` on
+  technology pages but POLICY only normatively requires it on
+  normative pages.
+
+Three of the five (DRIFT-009, DRIFT-010 via stub, DRIFT-011) are
+trivially agent-fixable; DRIFT-012 needs human action on a
+human-owned file; DRIFT-013 is informational.
+
+Refs: [[meta/drift]]
+
 ## [2026-05-28] edit | Airstream llm-wiki reachability fixes (mirror of Mill / Kyo)
 
 Applied the same one-way Layer 2 → Layer 3 reachability pattern to

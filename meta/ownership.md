@@ -78,7 +78,4 @@ ownership_reason: This decision is still in active human deliberation.
 - **projects/*/index.md is llm**: generated from frontmatter. Hand-edits will be lost.
 - **tools/ is human**: executable scripts should not be modified by the agent operating under those scripts.
 - **scratch/ is human**: personal working notes. Agent reads if asked, never writes, lint never enforces — outside the schema by design.
-**scratch/ is human**: personal working notes. Agent reads if
-    asked, never writes, lint never enforces — outside the schema by
-    design.
 
