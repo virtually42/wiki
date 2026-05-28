@@ -4,7 +4,7 @@ type: external-lib
 repo: /p/gh/kyo
 origin: git@tigidar:tigidar/kyo.git
 upstream: git@tigidar:getkyo/kyo.git
-wiki_branch: llm-wiki
+wiki_path: kyo/llm-wiki/
 last_observed: 2026-05-24
 commit: 9bab8d00
 wiki_sections:
@@ -22,25 +22,20 @@ wiki_sections:
 Kyo is our primary effect system for Scala 3 development. Used across all
 Scala projects for algebraic effects, concurrency, streaming, HTTP, and more.
 
-## Wiki Branch
+## Wiki Location
 
-```bash
-cd /p/gh/kyo && git checkout llm-wiki
-# Query entry point:
-cat llm-wiki/index.md
-```
+The wiki lives in this repo at `kyo/llm-wiki/`. Source code lives at `/p/gh/kyo`.
 
-The `llm-wiki/` folder contains 65 pages across 8 sections with YAML
-frontmatter for grep-based discovery. See `llm-wiki/CLAUDE.md` for
-query strategy.
+Pages reference source files with absolute paths (e.g. `/p/gh/kyo/kyo-core/shared/src/main/scala/kyo/Scope.scala`).
 
 ## Refresh Procedure
 
 ```bash
+# 1. Update source repo
 cd /p/gh/kyo
-git checkout llm-wiki
 git fetch upstream
 git rebase upstream/main
-# llm-wiki/ folder never conflicts — upstream doesn't have it
-# Then run ingest-external refresh kyo to update stale pages
+
+# 2. Back in wiki, update stale pages against new source
+# Compare source_commit in page frontmatter against current HEAD
 ```

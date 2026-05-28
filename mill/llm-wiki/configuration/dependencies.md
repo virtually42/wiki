@@ -3,8 +3,8 @@ id: dependencies
 title: Dependencies
 section: configuration
 source_files:
-  - libs/javalib/src/mill/javalib/Dep.scala
-  - libs/javalib/src/mill/javalib/JavaModule.scala
+  - /p/gh/mill/libs/javalib/src/mill/javalib/Dep.scala
+  - /p/gh/mill/libs/javalib/src/mill/javalib/JavaModule.scala
 source_commit: 41ce6c977c4
 related:
   - modules/java-module.md

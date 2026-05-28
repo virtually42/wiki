@@ -5,7 +5,7 @@ category: concept
 layer: foundation
 tags: [type-system, pending, effects, core-abstraction]
 source_files:
-  - kyo-kernel/shared/src/main/scala/kyo/kernel/Pending.scala
+  - /p/gh/kyo/kyo-kernel/shared/src/main/scala/kyo/kernel/Pending.scala
 source_commit: 9bab8d00
 api_surface: [<, eval, map, flatMap, andThen, handle]
 related: [kyo-concept-effect-widening, kyo-concept-effect-composition]

@@ -3,7 +3,7 @@ id: typescript-module
 title: TypeScriptModule
 section: modules
 source_files:
-  - libs/javascriptlib/src/mill/javascriptlib/TypeScriptModule.scala
+  - /p/gh/mill/libs/javascriptlib/src/mill/javascriptlib/TypeScriptModule.scala
 source_commit: 41ce6c977c4
 related: []
 ---

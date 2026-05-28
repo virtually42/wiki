@@ -5,8 +5,8 @@ category: convention
 layer: foundation
 tags: [signatures, using-clauses, frame, tag, allow-unsafe]
 source_files:
-  - CONTRIBUTING.md
-  - AGENTS.md
+  - /p/gh/kyo/CONTRIBUTING.md
+  - /p/gh/kyo/AGENTS.md
 source_commit: 9bab8d00
 api_surface: [Tag, Frame, AllowUnsafe]
 related: [kyo-data-tag, kyo-convention-inline]

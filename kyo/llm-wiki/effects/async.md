@@ -5,8 +5,8 @@ category: effect
 layer: core
 tags: [concurrency, fibers, fork, join, parallelism, async]
 source_files:
-  - kyo-core/shared/src/main/scala/kyo/Async.scala
-  - kyo-core/shared/src/main/scala/kyo/Fiber.scala
+  - /p/gh/kyo/kyo-core/shared/src/main/scala/kyo/Async.scala
+  - /p/gh/kyo/kyo-core/shared/src/main/scala/kyo/Fiber.scala
 source_commit: 9bab8d00
 api_surface: [Async.run, Async.parallel, Async.race, Async.sleep, Async.timeout, Async.never, Fiber.get, Fiber.map]
 related: [kyo-effect-sync, kyo-effect-scope]

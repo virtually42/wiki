@@ -5,7 +5,7 @@ category: effect
 layer: core
 tags: [retry, backoff, resilience, fault-tolerance]
 source_files:
-  - kyo-core/shared/src/main/scala/kyo/Retry.scala
+  - /p/gh/kyo/kyo-core/shared/src/main/scala/kyo/Retry.scala
 source_commit: 9bab8d00
 api_surface: [Retry, Retry.Policy, Schedule]
 related: [kyo-effect-async, kyo-effect-abort]

@@ -7,7 +7,7 @@ to find relevant pages. Use frontmatter glob to narrow scope.
 
 ### Knowledge Operations
 - **ingest** — Import a source (document or code) into the wiki
-- **ingest-external** — Create an llm-wiki branch in a forked external library repo
+- **ingest-external** — Create an llm-wiki for an external library in this wiki
 - **query** — Answer a question using wiki knowledge
 - **lint** — Check wiki consistency, compliance, and drift
 - **synthesize** — Generate cross-cutting analysis across projects or tech

@@ -3,7 +3,7 @@ id: kotlin-module
 title: KotlinModule
 section: modules
 source_files:
-  - libs/kotlinlib/src/mill/kotlinlib/KotlinModule.scala
+  - /p/gh/mill/libs/kotlinlib/src/mill/kotlinlib/KotlinModule.scala
 source_commit: 41ce6c977c4
 related:
   - modules/java-module.md

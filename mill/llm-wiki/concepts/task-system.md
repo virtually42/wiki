@@ -3,8 +3,8 @@ id: task-system
 title: Task System
 section: concepts
 source_files:
-  - core/api/src/mill/api/Task.scala
-  - core/api/java11/src/mill/api/TaskCtx.scala
+  - /p/gh/mill/core/api/src/mill/api/Task.scala
+  - /p/gh/mill/core/api/java11/src/mill/api/TaskCtx.scala
 source_commit: 41ce6c977c4
 related:
   - concepts/evaluation.md

@@ -3,7 +3,7 @@ id: scala-native-module
 title: ScalaNativeModule
 section: modules
 source_files:
-  - libs/scalanativelib/src/mill/scalanativelib/ScalaNativeModule.scala
+  - /p/gh/mill/libs/scalanativelib/src/mill/scalanativelib/ScalaNativeModule.scala
 source_commit: 41ce6c977c4
 related:
   - modules/scala-module.md

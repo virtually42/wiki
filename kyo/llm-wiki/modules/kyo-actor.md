@@ -5,7 +5,7 @@ category: module
 layer: application
 tags: [actors, supervision, messaging, concurrency]
 source_files:
-  - kyo-actor/shared/src/main/scala/kyo/
+  - /p/gh/kyo/kyo-actor/shared/src/main/scala/kyo/
 source_commit: 9bab8d00
 api_surface: [Actor, ActorRef, Supervisor]
 related: [kyo-effect-async, kyo-effect-channel]

@@ -5,7 +5,7 @@ category: module
 layer: application
 tags: [workflow, durable, saga, compensation, persistence]
 source_files:
-  - kyo-flow/shared/src/main/scala/kyo/
+  - /p/gh/kyo/kyo-flow/shared/src/main/scala/kyo/
 source_commit: 9bab8d00
 api_surface: [Workflow, Execution, Step]
 related: [kyo-effect-async]

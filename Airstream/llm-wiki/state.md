@@ -1,3 +1,20 @@
+---
+id: airstream-state
+title: "Mutable State: Var and Val"
+category: concept
+tags: [var, val, derived-var, zoom, lens, strict-signal, mutable-state, form-state]
+source_files:
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/state/Var.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/state/Val.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/state/SourceVar.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/state/DerivedVar.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/state/LazyDerivedVar.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/state/StrictSignal.scala
+source_commit: 781abe8
+related: [airstream-signals, airstream-concepts]
+see_also: [airstream-patterns]
+---
+
 # Mutable State: Var and Val
 
 ## Var[A]

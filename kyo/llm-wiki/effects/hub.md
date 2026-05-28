@@ -5,7 +5,7 @@ category: effect
 layer: core
 tags: [concurrency, broadcast, pub-sub, fan-out]
 source_files:
-  - kyo-core/shared/src/main/scala/kyo/Hub.scala
+  - /p/gh/kyo/kyo-core/shared/src/main/scala/kyo/Hub.scala
 source_commit: 9bab8d00
 api_surface: [Hub.init, Hub.put, Hub.offer, Hub.subscribe, Hub.close]
 related: [kyo-effect-channel, kyo-effect-queue]

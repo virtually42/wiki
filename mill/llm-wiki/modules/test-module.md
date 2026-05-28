@@ -3,7 +3,7 @@ id: test-module
 title: TestModule
 section: modules
 source_files:
-  - libs/javalib/src/mill/javalib/TestModule.scala
+  - /p/gh/mill/libs/javalib/src/mill/javalib/TestModule.scala
 source_commit: 41ce6c977c4
 related:
   - modules/java-module.md

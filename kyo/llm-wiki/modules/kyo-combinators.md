@@ -5,7 +5,7 @@ category: module
 layer: core
 tags: [combinators, zio-style, operators, extensions, parallel]
 source_files:
-  - kyo-combinators/shared/src/main/scala/kyo/
+  - /p/gh/kyo/kyo-combinators/shared/src/main/scala/kyo/
 source_commit: 9bab8d00
 api_surface: [Kyo.foreach, Kyo.collect, Kyo.foreachPar, Kyo.collectPar, "*>", "<*>", "<&>", fork, delay, repeat]
 related: [kyo-concept-pending-type]

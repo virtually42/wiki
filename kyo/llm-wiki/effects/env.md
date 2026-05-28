@@ -5,7 +5,7 @@ category: effect
 layer: prelude
 tags: [dependency-injection, environment, typemap, layer]
 source_files:
-  - kyo-prelude/shared/src/main/scala/kyo/Env.scala
+  - /p/gh/kyo/kyo-prelude/shared/src/main/scala/kyo/Env.scala
 source_commit: 9bab8d00
 api_surface: [Env.get, Env.run, Env.runLayer, Layer, Layer.init, Layer.from]
 related: [kyo-effect-local, kyo-effect-abort]

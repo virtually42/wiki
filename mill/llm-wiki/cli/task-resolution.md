@@ -3,7 +3,7 @@ id: task-resolution
 title: Task Resolution
 section: cli
 source_files:
-  - core/resolve/src/mill/resolve/ResolveCore.scala
+  - /p/gh/mill/core/resolve/src/mill/resolve/ResolveCore.scala
 source_commit: 41ce6c977c4
 related:
   - cli/commands.md

@@ -25,7 +25,7 @@ and naming/linking conventions.
 | ticket | project | projects/\*/tickets/ | Atomic work unit |
 | log-entry | project | projects/\*/log.md | Append-only session record (not a standalone file) |
 | code-source | source | sources/raw/code/ | Pointer to a code repository |
-| external-lib | source | sources/raw/code/ | Pointer to a forked external library with llm-wiki branch |
+| external-lib | source | sources/raw/code/ | Pointer to an external library with llm-wiki in this repo |
 
 ---
 
@@ -361,19 +361,18 @@ entry_points:
 
 ### external-lib
 
-A forked external library with a query-optimized llm-wiki branch.
-The llm-wiki branch lives in origin (our fork) and never merges to
-upstream main. It contains an `llm-wiki/` folder with structured
-documentation for fast LLM querying.
+An external library with a query-optimized llm-wiki in this repo.
+The wiki lives at `<name>/llm-wiki/` in the wiki repo. Source code
+lives at `/p/gh/<name>`. Pages reference source files with absolute paths.
 
 ```yaml
 ---
 id: source-kyo
 type: external-lib
-repo: /p/gh/kyo                    # local path
+repo: /p/gh/kyo                    # source code location
 origin: git@tigidar:tigidar/kyo.git
 upstream: git@tigidar:getkyo/kyo.git
-wiki_branch: llm-wiki              # branch containing llm-wiki/
+wiki_path: kyo/llm-wiki/           # wiki location in this repo
 last_observed: 2026-05-24
 commit: 9bab8d00
 wiki_sections:                     # what the llm-wiki covers
@@ -389,13 +388,13 @@ wiki_sections:                     # what the llm-wiki covers
 ## Purpose
 What we use this library for.
 
-## Wiki Branch
-How to query: `cd <repo> && git checkout llm-wiki && read llm-wiki/index.md`
+## Wiki Location
+The wiki lives in this repo at `<name>/llm-wiki/`.
+Source code lives at `/p/gh/<name>`.
 
 ## Refresh Procedure
-1. `git fetch upstream && git rebase upstream/main`
-2. Resolve any conflicts in llm-wiki/ (unlikely — upstream never has this folder)
-3. Run `ingest-external refresh <name>` to update stale pages
+1. Update source: `cd /p/gh/<name> && git fetch upstream && git rebase upstream/main`
+2. Run `ingest-external refresh <name>` to update stale wiki pages
 ```
 
 ---

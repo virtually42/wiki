@@ -5,7 +5,7 @@ category: effect
 layer: core
 tags: [concurrency, channel, bounded, backpressure, mpmc]
 source_files:
-  - kyo-core/shared/src/main/scala/kyo/Channel.scala
+  - /p/gh/kyo/kyo-core/shared/src/main/scala/kyo/Channel.scala
 source_commit: 9bab8d00
 api_surface: [Channel.init, Channel.put, Channel.take, Channel.offer, Channel.poll, Channel.stream, Channel.close]
 related: [kyo-effect-queue, kyo-effect-hub, kyo-effect-async]

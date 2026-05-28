@@ -5,7 +5,7 @@ kind: descriptive
 status: accepted
 scope: global
 created: 2026-05-24
-updated: 2026-05-24
+updated: 2026-05-28
 tags: [ingest, external-library, llm-wiki, query]
 ownership: shared
 ownership_reason: procedure definition — human reviews, agent executes
@@ -14,9 +14,9 @@ ownership_reason: procedure definition — human reviews, agent executes
 ## Purpose
 
 Create a query-optimized llm-wiki for a third-party library we use
-frequently. The wiki lives on an `llm-wiki` branch in our fork,
-never merges to main, and provides fast context loading when coding
-against that library.
+frequently. The wiki lives in this repo under `<name>/llm-wiki/`,
+with `source_files:` frontmatter pointing to absolute paths in the
+source repo at `/p/gh/<name>`.
 
 ## When to Use
 
@@ -24,53 +24,47 @@ against that library.
 - We'll query it repeatedly during coding sessions
 - The library has enough API surface that reading raw docs is slow
 
-## Procedure: `ingest-external <repo-path>`
+## Procedure: `ingest-external <name>`
 
 ### Prerequisites
 
-1. Library is forked into our origin (e.g., `tigidar/<name>`)
-2. Upstream remote is configured: `git remote add upstream <upstream-url>`
-3. Local clone exists at `<repo-path>`
+1. Library source exists at `/p/gh/<name>`
+2. Upstream remote is configured if using a fork
 
 ### Steps
 
 ```
-1. cd <repo-path>
-2. git checkout -b llm-wiki
-3. mkdir -p llm-wiki/{meta,concepts,effects,data,modules,patterns,conventions,recipes}
-   (adjust sections to match the library's domain — not all sections apply)
+1. Create wiki structure in this repo:
+   mkdir -p <name>/llm-wiki/{meta,concepts,modules,patterns,conventions,recipes}
+   (adjust sections to match the library's domain)
 
-4. Read the library's key docs:
+2. Read the library's key docs at /p/gh/<name>:
    - README.md (overview, API docs)
    - CONTRIBUTING.md (conventions, patterns)
    - AGENTS.md or similar (if exists)
    - Source files for API surface
 
-5. Create control files:
-   - llm-wiki/CLAUDE.md     (~25 lines, query dispatch)
-   - llm-wiki/meta/schema.md (page formats for this wiki)
-   - llm-wiki/index.md       (root catalog with quick lookup table)
+3. Create control files:
+   - <name>/llm-wiki/CLAUDE.md     (~25 lines, query dispatch, source repo path)
+   - <name>/llm-wiki/meta/schema.md (page formats for this wiki)
+   - <name>/llm-wiki/index.md       (root catalog with quick lookup table)
 
-6. Create section indexes:
+4. Create section indexes:
    - Each section gets an index.md with a table of all pages
 
-7. Create content pages:
+5. Create content pages:
    - One page per concept, API, module, pattern
    - Every page has YAML frontmatter with:
      id, title, category, layer, tags, source_files,
      source_commit, api_surface, related, see_also
+   - source_files use ABSOLUTE paths: /p/gh/<name>/path/to/file.scala
    - Focus on what a developer NEEDS to use the API correctly
 
-8. Register in main wiki:
+6. Register in main wiki:
    - Create sources/raw/code/<name>.md with type: external-lib
-   - Point to repo, origin, upstream, wiki_branch, sections
+   - Set repo, origin, upstream, wiki_path, sections
 
-9. Commit on the llm-wiki branch:
-   - git add llm-wiki/
-   - git commit -m "[llm-wiki] add query-optimized knowledge base for <name>"
-
-10. Push to origin:
-    - git push -u origin llm-wiki
+7. Commit in this wiki repo
 ```
 
 ### Section Selection
@@ -89,7 +83,7 @@ Not every library needs all sections. Choose based on the library:
 
 ### Page Schema
 
-See `llm-wiki/meta/schema.md` in the target repo for the full spec.
+See `<name>/llm-wiki/meta/schema.md` for the full spec.
 Key frontmatter fields:
 
 ```yaml
@@ -99,7 +93,7 @@ title: "Human Title"
 category: concept | effect | data | module | pattern | convention | recipe
 layer: foundation | core | integration | application
 tags: [searchable, keywords]
-source_files: [relative/path/to/source.scala]
+source_files: [/p/gh/<lib>/path/to/source.scala]  # absolute paths
 source_commit: <short-hash>      # for staleness tracking
 api_surface: [Type.method, ...]  # for grep-based discovery
 related: [other-page-ids]
@@ -109,12 +103,12 @@ see_also: [pattern-ids]
 
 ## Procedure: `ingest-external refresh <name>`
 
-Update an existing llm-wiki after rebasing on upstream.
+Update an existing llm-wiki after the source repo rebases on upstream.
 
 ```
-1. Read sources/raw/code/<name>.md to find repo path and wiki_branch
-2. cd <repo-path> && git checkout <wiki_branch>
-3. Compare current HEAD commit to source_commit in pages
+1. Read sources/raw/code/<name>.md to find repo path
+2. cd /p/gh/<name> — check current HEAD commit
+3. Compare HEAD to source_commit in wiki pages
 4. For pages where source_files have changed since source_commit:
    - Re-read the source files
    - Update the page content
@@ -124,23 +118,23 @@ Update an existing llm-wiki after rebasing on upstream.
    - Create pages for significant additions
 6. Rebuild index pages from current frontmatter
 7. Update sources/raw/code/<name>.md with new commit and last_observed
-8. Commit: "[llm-wiki] refresh from upstream <short-hash>"
 ```
 
 ## Procedure: `ingest-external query <name> <question>`
 
-Query an external library's wiki from the main wiki context.
+Query an external library's wiki.
 
 ```
-1. Read sources/raw/code/<name>.md to find repo path and wiki_branch
-2. cd <repo-path> && git checkout <wiki_branch>
-3. Read llm-wiki/CLAUDE.md for query strategy
-4. Follow the discovery chain in llm-wiki/index.md
-5. Return to main wiki context with the answer
+1. Read sources/raw/code/<name>.md to find wiki_path
+2. Read <name>/llm-wiki/CLAUDE.md for query strategy
+3. Follow the discovery chain in <name>/llm-wiki/index.md
+4. If page references source_files, verify against /p/gh/<name> if stale
 ```
 
 ## Existing External Libraries
 
-| Library | Repo | Branch | Sections |
-|---------|------|--------|----------|
-| Kyo | /p/gh/kyo | llm-wiki | concepts, effects, data, modules, patterns, conventions, recipes |
+| Library | Source Repo | Wiki Path | Sections |
+|---------|-----------|-----------|----------|
+| Kyo | /p/gh/kyo | kyo/llm-wiki/ | concepts, effects, data, modules, patterns, conventions, recipes |
+| Mill | /p/gh/mill | mill/llm-wiki/ | concepts, modules, configuration, patterns, recipes, cli |
+| Airstream | /p/gh/Airstream | Airstream/llm-wiki/ | concepts, signals, streams, state, ownership, transactions, operators, patterns, conventions |

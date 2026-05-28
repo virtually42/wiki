@@ -5,7 +5,7 @@ category: concept
 layer: core
 tags: [scope, resources, acquire-release, lifecycle, finalization]
 source_files:
-  - kyo-core/shared/src/main/scala/kyo/Scope.scala
+  - /p/gh/kyo/kyo-core/shared/src/main/scala/kyo/Scope.scala
 source_commit: 9bab8d00
 api_surface: [Scope, Scope.init, Scope.run, Scope.ensure]
 related: [kyo-effect-scope, kyo-effect-async]

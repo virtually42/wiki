@@ -5,7 +5,7 @@ category: concept
 layer: foundation
 tags: [type-system, contravariance, widening, subtyping]
 source_files:
-  - kyo-kernel/shared/src/main/scala/kyo/kernel/Pending.scala
+  - /p/gh/kyo/kyo-kernel/shared/src/main/scala/kyo/kernel/Pending.scala
 source_commit: 9bab8d00
 api_surface: []
 related: [kyo-concept-pending-type, kyo-concept-effect-composition]

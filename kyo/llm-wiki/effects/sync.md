@@ -5,7 +5,7 @@ category: effect
 layer: core
 tags: [side-effects, suspension, io, unsafe]
 source_files:
-  - kyo-core/shared/src/main/scala/kyo/Sync.scala
+  - /p/gh/kyo/kyo-core/shared/src/main/scala/kyo/Sync.scala
 source_commit: 9bab8d00
 api_surface: [Sync.defer, Sync.Unsafe.run, KyoApp]
 related: [kyo-effect-async, kyo-concept-pending-type]

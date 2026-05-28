@@ -5,7 +5,7 @@ category: effect
 layer: core
 tags: [concurrency, queue, non-blocking, fifo]
 source_files:
-  - kyo-core/shared/src/main/scala/kyo/Queue.scala
+  - /p/gh/kyo/kyo-core/shared/src/main/scala/kyo/Queue.scala
 source_commit: 9bab8d00
 api_surface: [Queue.init, Queue.offer, Queue.poll, Queue.size, Queue.close]
 related: [kyo-effect-channel, kyo-effect-hub]

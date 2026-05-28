@@ -5,7 +5,7 @@ category: effect
 layer: prelude
 tags: [emission, writer, accumulation, push-based]
 source_files:
-  - kyo-prelude/shared/src/main/scala/kyo/Emit.scala
+  - /p/gh/kyo/kyo-prelude/shared/src/main/scala/kyo/Emit.scala
 source_commit: 9bab8d00
 api_surface: [Emit.value, Emit.valueWith, Emit.run, Emit.runFold, Emit.runForeach]
 related: [kyo-effect-var, kyo-effect-stream]

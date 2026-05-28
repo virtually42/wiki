@@ -1,3 +1,21 @@
+---
+id: airstream-ownership
+title: "Ownership Model"
+category: concept
+tags: [owner, subscription, dynamic-owner, memory-management, lifecycle, manual-owner]
+source_files:
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/ownership/Owner.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/ownership/Subscription.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/ownership/DynamicOwner.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/ownership/DynamicSubscription.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/ownership/TransferableSubscription.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/ownership/ManualOwner.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/ownership/OneTimeOwner.scala
+source_commit: 781abe8
+related: [airstream-concepts, airstream-transactions]
+see_also: [airstream-patterns]
+---
+
 # Ownership Model
 
 Airstream uses ownership-based memory management. Observables are lazy and

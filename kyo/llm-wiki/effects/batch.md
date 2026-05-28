@@ -5,7 +5,7 @@ category: effect
 layer: prelude
 tags: [batching, n-plus-one, optimization, data-loading]
 source_files:
-  - kyo-prelude/shared/src/main/scala/kyo/Batch.scala
+  - /p/gh/kyo/kyo-prelude/shared/src/main/scala/kyo/Batch.scala
 source_commit: 9bab8d00
 api_surface: [Batch.source, Batch.sourceSeq, Batch.sourceMap, Batch.eval, Batch.run]
 related: [kyo-effect-stream, kyo-effect-async]

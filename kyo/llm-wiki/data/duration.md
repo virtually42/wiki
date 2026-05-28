@@ -5,7 +5,7 @@ category: data
 layer: foundation
 tags: [time, duration, nanoseconds, opaque-type]
 source_files:
-  - kyo-data/shared/src/main/scala/kyo/Duration.scala
+  - /p/gh/kyo/kyo-data/shared/src/main/scala/kyo/Duration.scala
 source_commit: 9bab8d00
 api_surface: [Duration, Duration.fromNanos, Duration.Zero, Duration.Infinity]
 related: [kyo-effect-clock]

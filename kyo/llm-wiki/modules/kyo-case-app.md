@@ -5,7 +5,7 @@ category: module
 layer: integration
 tags: [cli, parsing, command-line, case-app]
 source_files:
-  - kyo-case-app/shared/src/main/scala/kyo/
+  - /p/gh/kyo/kyo-case-app/shared/src/main/scala/kyo/
 source_commit: 9bab8d00
 api_surface: [KyoCaseApp, KyoCommand]
 related: []

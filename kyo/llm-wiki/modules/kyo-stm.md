@@ -5,7 +5,7 @@ category: module
 layer: application
 tags: [stm, transactions, concurrent-state, tref]
 source_files:
-  - kyo-stm/shared/src/main/scala/kyo/
+  - /p/gh/kyo/kyo-stm/shared/src/main/scala/kyo/
 source_commit: 9bab8d00
 api_surface: [STM, TRef, STM.run]
 related: [kyo-effect-async]

@@ -1,3 +1,20 @@
+---
+id: airstream-operators
+title: "Operators"
+category: operator
+tags: [map, filter, combine, merge, flatmap, flatten, split, distinct, timing, recover, debug]
+source_files:
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/misc/
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/combine/
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/flatten/
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/split/
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/distinct/
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/timing/
+source_commit: 781abe8
+related: [airstream-streams, airstream-signals, airstream-concepts]
+see_also: [airstream-patterns, airstream-extensions]
+---
+
 # Operators
 
 ## Map

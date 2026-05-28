@@ -5,7 +5,7 @@ category: effect
 layer: prelude
 tags: [context, scoped-values, thread-local, propagation]
 source_files:
-  - kyo-prelude/shared/src/main/scala/kyo/Local.scala
+  - /p/gh/kyo/kyo-prelude/shared/src/main/scala/kyo/Local.scala
 source_commit: 9bab8d00
 api_surface: [Local.init, Local.get, Local.let]
 related: [kyo-effect-env, kyo-effect-var]

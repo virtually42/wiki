@@ -5,7 +5,7 @@ category: concept
 layer: foundation
 tags: [effects, algebraic-effects, suspend, handle, architecture]
 source_files:
-  - kyo-kernel/shared/src/main/scala/kyo/kernel/
+  - /p/gh/kyo/kyo-kernel/shared/src/main/scala/kyo/kernel/
 source_commit: 9bab8d00
 api_surface: [ArrowEffect, ContextEffect]
 related: [kyo-concept-pending-type, kyo-concept-effect-composition]

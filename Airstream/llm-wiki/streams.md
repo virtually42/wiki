@@ -1,3 +1,17 @@
+---
+id: airstream-streams
+title: "EventStream"
+category: concept
+tags: [eventstream, writable-stream, merge, filter, collect, delay, throttle, debounce]
+source_files:
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/core/EventStream.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/core/WritableStream.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/combine/MergeStream.scala
+source_commit: 781abe8
+related: [airstream-concepts, airstream-signals, airstream-operators]
+see_also: [airstream-eventbus, airstream-timing]
+---
+
 # EventStream
 
 An EventStream has no current value. It fires discrete events to observers.

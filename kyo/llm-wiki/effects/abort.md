@@ -5,7 +5,7 @@ category: effect
 layer: prelude
 tags: [error-handling, short-circuit, typed-errors, union-types, result]
 source_files:
-  - kyo-prelude/shared/src/main/scala/kyo/Abort.scala
+  - /p/gh/kyo/kyo-prelude/shared/src/main/scala/kyo/Abort.scala
 source_commit: 9bab8d00
 api_surface: [Abort.fail, Abort.panic, Abort.get, Abort.when, Abort.unless, Abort.catching, Abort.run, Abort.runPartial, Abort.recover, Abort.fold]
 related: [kyo-data-result, kyo-effect-env]

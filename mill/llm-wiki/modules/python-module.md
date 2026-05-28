@@ -3,7 +3,7 @@ id: python-module
 title: PythonModule
 section: modules
 source_files:
-  - libs/pythonlib/src/mill/pythonlib/PythonModule.scala
+  - /p/gh/mill/libs/pythonlib/src/mill/pythonlib/PythonModule.scala
 source_commit: 41ce6c977c4
 related: []
 ---

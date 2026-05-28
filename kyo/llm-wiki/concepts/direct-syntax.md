@@ -5,7 +5,7 @@ category: concept
 layer: core
 tags: [direct, syntax, now, later, control-flow, macro]
 source_files:
-  - kyo-direct/shared/src/main/scala/kyo/
+  - /p/gh/kyo/kyo-direct/shared/src/main/scala/kyo/
 source_commit: 9bab8d00
 api_surface: [direct, .now, .later]
 related: [kyo-concept-pending-type, kyo-module-kyo-direct]

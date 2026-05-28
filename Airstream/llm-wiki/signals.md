@@ -1,3 +1,18 @@
+---
+id: airstream-signals
+title: "Signals"
+category: concept
+tags: [signal, strict-signal, writable-signal, current-value, lazy-evaluation, distinct]
+source_files:
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/core/Signal.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/core/WritableSignal.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/state/StrictSignal.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/common/SingleParentSignal.scala
+source_commit: 781abe8
+related: [airstream-concepts, airstream-state, airstream-streams]
+see_also: [airstream-operators]
+---
+
 # Signals
 
 A Signal always has a current value (`Try[A]`). It represents continuous

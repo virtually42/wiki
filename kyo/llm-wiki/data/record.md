@@ -5,7 +5,7 @@ category: data
 layer: foundation
 tags: [structural-typing, record, intersection-types, dynamic]
 source_files:
-  - kyo-data/shared/src/main/scala/kyo/Record.scala
+  - /p/gh/kyo/kyo-data/shared/src/main/scala/kyo/Record.scala
 source_commit: 9bab8d00
 api_surface: [Record, Record.empty, Field, Fields, ~]
 related: [kyo-data-tag]

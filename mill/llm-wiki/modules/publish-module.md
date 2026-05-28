@@ -3,7 +3,7 @@ id: publish-module
 title: PublishModule
 section: modules
 source_files:
-  - libs/javalib/src/mill/javalib/PublishModule.scala
+  - /p/gh/mill/libs/javalib/src/mill/javalib/PublishModule.scala
 source_commit: 41ce6c977c4
 related:
   - configuration/publishing.md

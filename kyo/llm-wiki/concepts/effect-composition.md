@@ -5,7 +5,7 @@ category: concept
 layer: foundation
 tags: [effects, composition, intersection-types, handling-order]
 source_files:
-  - kyo-kernel/shared/src/main/scala/kyo/kernel/Pending.scala
+  - /p/gh/kyo/kyo-kernel/shared/src/main/scala/kyo/kernel/Pending.scala
 source_commit: 9bab8d00
 api_surface: [map, flatMap, handle, Abort.run, Env.run]
 related: [kyo-concept-pending-type, kyo-concept-effect-widening]

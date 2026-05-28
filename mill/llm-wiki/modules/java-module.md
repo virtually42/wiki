@@ -3,7 +3,7 @@ id: java-module
 title: JavaModule
 section: modules
 source_files:
-  - libs/javalib/src/mill/javalib/JavaModule.scala
+  - /p/gh/mill/libs/javalib/src/mill/javalib/JavaModule.scala
 source_commit: 41ce6c977c4
 related:
   - modules/scala-module.md

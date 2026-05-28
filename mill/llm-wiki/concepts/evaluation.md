@@ -3,8 +3,8 @@ id: evaluation
 title: Evaluation Model
 section: concepts
 source_files:
-  - core/api/src/mill/api/Evaluator.scala
-  - core/exec/src/mill/exec/Execution.scala
+  - /p/gh/mill/core/api/src/mill/api/Evaluator.scala
+  - /p/gh/mill/core/exec/src/mill/exec/Execution.scala
 source_commit: 41ce6c977c4
 related:
   - concepts/task-system.md

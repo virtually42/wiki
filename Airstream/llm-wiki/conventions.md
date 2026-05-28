@@ -1,3 +1,16 @@
+---
+id: airstream-conventions
+title: "Conventions"
+category: convention
+tags: [error-handling, naming, variance, lifecycle, performance, imports]
+source_files:
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/core/AirstreamError.scala
+  - /p/gh/Airstream/README.md
+source_commit: 781abe8
+related: [airstream-concepts, airstream-ownership]
+see_also: [airstream-patterns]
+---
+
 # Conventions
 
 ## Error Handling

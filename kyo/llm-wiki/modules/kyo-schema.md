@@ -5,7 +5,7 @@ category: module
 layer: application
 tags: [schema, json, protobuf, lenses, diffs, derivation]
 source_files:
-  - kyo-schema/shared/src/main/scala/kyo/
+  - /p/gh/kyo/kyo-schema/shared/src/main/scala/kyo/
 source_commit: 9bab8d00
 api_surface: [Schema, Focus, Changeset, Validation]
 related: []

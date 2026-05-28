@@ -5,7 +5,7 @@ category: recipe
 layer: application
 tags: [http, server, routes, rest-api]
 source_files:
-  - kyo-examples/jvm/src/main/scala/examples/ledger/api/
+  - /p/gh/kyo/kyo-examples/jvm/src/main/scala/examples/ledger/api/
 source_commit: 9bab8d00
 api_surface: [HttpServer.init, HttpRoute.get, HttpRoute.post, HttpHandler, HttpFilter, KyoApp]
 related: [kyo-module-kyo-http]

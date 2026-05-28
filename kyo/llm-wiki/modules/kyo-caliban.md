@@ -5,7 +5,7 @@ category: module
 layer: integration
 tags: [graphql, caliban, schema-derivation, server]
 source_files:
-  - kyo-caliban/jvm/src/main/scala/kyo/
+  - /p/gh/kyo/kyo-caliban/jvm/src/main/scala/kyo/
 source_commit: 9bab8d00
 api_surface: [CalibanKyo, KyoInterpreter]
 related: [kyo-module-kyo-http]

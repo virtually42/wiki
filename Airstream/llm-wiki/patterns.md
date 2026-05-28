@@ -1,3 +1,14 @@
+---
+id: airstream-patterns
+title: "Common Patterns"
+category: pattern
+tags: [form-state, list-rendering, split, loading-state, eventbus, testing, error-propagation]
+source_files: []
+source_commit: 781abe8
+related: [airstream-state, airstream-operators, airstream-ownership]
+see_also: [airstream-eventbus, airstream-conventions]
+---
+
 # Common Patterns
 
 ## Reactive Form State

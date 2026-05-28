@@ -5,7 +5,7 @@ category: module
 layer: application
 tags: [http, server, client, routes, streaming, sse]
 source_files:
-  - kyo-http/shared/src/main/scala/kyo/
+  - /p/gh/kyo/kyo-http/shared/src/main/scala/kyo/
 source_commit: 9bab8d00
 api_surface: [HttpClient, HttpServer, HttpRoute, HttpHandler, HttpFilter]
 related: [kyo-module-kyo-caliban]

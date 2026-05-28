@@ -5,7 +5,7 @@ category: convention
 layer: foundation
 tags: [inline, performance, suspend, handle, optimization]
 source_files:
-  - CONTRIBUTING.md
+  - /p/gh/kyo/CONTRIBUTING.md
 source_commit: 9bab8d00
 api_surface: []
 related: [kyo-convention-method-signatures]

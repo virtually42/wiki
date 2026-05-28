@@ -1,7 +1,7 @@
 # Kyo Library Wiki
 
 Query-optimized knowledge base for the Kyo effect system.
-Start by reading `llm-wiki/index.md` to find relevant pages.
+Start by reading `index.md` to find relevant pages. Source repo: `/p/gh/kyo`
 
 ## Operations
 
@@ -14,7 +14,7 @@ Start by reading `llm-wiki/index.md` to find relevant pages.
 1. Read index.md → identify relevant section (concepts, effects, data, modules, patterns, recipes)
 2. Read section index.md → find specific pages matching your need
 3. Read matched pages → use frontmatter `related` and `see_also` for adjacent knowledge
-4. If page references source: verify against actual source file (pages can be stale)
+4. If page references source: verify against actual source file at `/p/gh/kyo` (pages can be stale)
 
 ## Staleness
 

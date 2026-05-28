@@ -5,8 +5,8 @@ category: convention
 layer: foundation
 tags: [testing, test-base, assertions, platform-conditional]
 source_files:
-  - CONTRIBUTING.md
-  - AGENTS.md
+  - /p/gh/kyo/CONTRIBUTING.md
+  - /p/gh/kyo/AGENTS.md
 source_commit: 9bab8d00
 api_surface: []
 related: [kyo-pattern-testing]

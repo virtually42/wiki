@@ -3,7 +3,7 @@ id: scala-module
 title: ScalaModule
 section: modules
 source_files:
-  - libs/scalalib/src/mill/scalalib/ScalaModule.scala
+  - /p/gh/mill/libs/scalalib/src/mill/scalalib/ScalaModule.scala
 source_commit: 41ce6c977c4
 related:
   - modules/java-module.md

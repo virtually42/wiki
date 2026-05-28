@@ -4,7 +4,7 @@ type: external-lib
 repo: /p/gh/Airstream
 origin: https://github.com/raquo/Airstream.git
 upstream: https://github.com/raquo/Airstream.git
-wiki_branch: llm-wiki
+wiki_path: Airstream/llm-wiki/
 last_observed: 2026-05-24
 commit: 0f04f94
 wiki_sections:
@@ -25,12 +25,12 @@ Reactive event streaming library for Scala.js. Used in Laminar for UI
 state management. Provides Observable, Signal, EventStream, Var, and an
 ownership-based subscription lifecycle.
 
-## Wiki Branch
+## Wiki Location
 
-How to query: `cd /p/gh/Airstream && git checkout llm-wiki && read llm-wiki/index.md`
+The wiki lives in this repo at `Airstream/llm-wiki/`. Source code lives at `/p/gh/Airstream`.
 
 Key sections:
-- **concepts** — type hierarchy (Observable → Signal/EventStream), Observer, laziness model
+- **concepts** — type hierarchy (Observable -> Signal/EventStream), Observer, laziness model
 - **signals** — state-based observable with current value, WritableSignal, StrictSignal
 - **streams** — event-based observable, filter/collect/merge/delay/throttle
 - **state** — Var (mutable), Val (constant), zoom/bimap derived vars
@@ -42,6 +42,12 @@ Key sections:
 
 ## Refresh Procedure
 
-1. `git fetch origin && git rebase origin/master`
-2. Resolve any conflicts in llm-wiki/ (unlikely — upstream never has this folder)
-3. Review source changes and update affected llm-wiki/ pages
+```bash
+# 1. Update source repo
+cd /p/gh/Airstream
+git fetch origin
+git rebase origin/master
+
+# 2. Back in wiki, update stale pages against new source
+# Compare page content against current source
+```

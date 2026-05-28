@@ -3,7 +3,7 @@ id: daemon
 title: Daemon Mode
 section: cli
 source_files:
-  - runner/launcher/src/mill/launcher/MillLauncherMain.scala
+  - /p/gh/mill/runner/launcher/src/mill/launcher/MillLauncherMain.scala
 source_commit: 41ce6c977c4
 related:
   - cli/commands.md

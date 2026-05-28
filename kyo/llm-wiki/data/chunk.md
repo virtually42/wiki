@@ -5,7 +5,7 @@ category: data
 layer: foundation
 tags: [collection, sequence, immutable, slice, efficient]
 source_files:
-  - kyo-data/shared/src/main/scala/kyo/Chunk.scala
+  - /p/gh/kyo/kyo-data/shared/src/main/scala/kyo/Chunk.scala
 source_commit: 9bab8d00
 api_surface: [Chunk, Chunk.apply, Chunk.empty, Chunk.from, Chunk.fill]
 related: [kyo-data-maybe, kyo-effect-stream]

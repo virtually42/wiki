@@ -5,7 +5,7 @@ category: data
 layer: foundation
 tags: [result, success, failure, panic, error-handling, opaque-type]
 source_files:
-  - kyo-data/shared/src/main/scala/kyo/Result.scala
+  - /p/gh/kyo/kyo-data/shared/src/main/scala/kyo/Result.scala
 source_commit: 9bab8d00
 api_surface: [Result.succeed, Result.fail, Result.panic, Result.apply, Result.Success, Result.Failure, Result.Panic]
 related: [kyo-data-maybe, kyo-effect-abort]

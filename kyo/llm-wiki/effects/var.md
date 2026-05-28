@@ -5,7 +5,7 @@ category: effect
 layer: prelude
 tags: [state, mutable, functional-state, isolation]
 source_files:
-  - kyo-prelude/shared/src/main/scala/kyo/Var.scala
+  - /p/gh/kyo/kyo-prelude/shared/src/main/scala/kyo/Var.scala
 source_commit: 9bab8d00
 api_surface: [Var.get, Var.set, Var.update, Var.use, Var.run, Var.runTuple]
 related: [kyo-effect-emit, kyo-effect-local]

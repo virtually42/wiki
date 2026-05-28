@@ -1,3 +1,16 @@
+---
+id: airstream-transactions
+title: "Transactions"
+category: concept
+tags: [transaction, glitch-free, topological-rank, sync-observable, propagation]
+source_files:
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/core/Transaction.scala
+  - /p/gh/Airstream/src/main/scala/com/raquo/airstream/core/SyncObservable.scala
+source_commit: 781abe8
+related: [airstream-concepts, airstream-ownership]
+see_also: [airstream-operators]
+---
+
 # Transactions
 
 Transactions provide glitch-free propagation. They ensure synchronously-

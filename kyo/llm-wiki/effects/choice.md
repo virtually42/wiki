@@ -5,7 +5,7 @@ category: effect
 layer: prelude
 tags: [non-determinism, branching, backtracking, exploration]
 source_files:
-  - kyo-prelude/shared/src/main/scala/kyo/Choice.scala
+  - /p/gh/kyo/kyo-prelude/shared/src/main/scala/kyo/Choice.scala
 source_commit: 9bab8d00
 api_surface: [Choice.eval, Choice.evalSeq, Choice.drop, Choice.dropIf, Choice.run]
 related: [kyo-effect-abort, kyo-effect-stream]

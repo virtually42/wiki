@@ -3,7 +3,7 @@ id: cross-building
 title: Cross-Building
 section: configuration
 source_files:
-  - core/api/src/mill/api/Cross.scala
+  - /p/gh/mill/core/api/src/mill/api/Cross.scala
 source_commit: 41ce6c977c4
 related:
   - modules/scala-module.md

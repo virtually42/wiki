@@ -5,7 +5,7 @@ category: data
 layer: foundation
 tags: [optional, maybe, absent, present, opaque-type]
 source_files:
-  - kyo-data/shared/src/main/scala/kyo/Maybe.scala
+  - /p/gh/kyo/kyo-data/shared/src/main/scala/kyo/Maybe.scala
 source_commit: 9bab8d00
 api_surface: [Maybe, Maybe.apply, Maybe.when, Maybe.fromOption, Absent, Present, Maybe.empty]
 related: [kyo-data-result]

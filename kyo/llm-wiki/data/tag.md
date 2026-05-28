@@ -5,7 +5,7 @@ category: data
 layer: foundation
 tags: [type-info, runtime, reification, generic]
 source_files:
-  - kyo-data/shared/src/main/scala/kyo/Tag.scala
+  - /p/gh/kyo/kyo-data/shared/src/main/scala/kyo/Tag.scala
 source_commit: 9bab8d00
 api_surface: [Tag, ConcreteTag, Frame]
 related: [kyo-effect-env]

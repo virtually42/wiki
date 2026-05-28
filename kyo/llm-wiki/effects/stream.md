@@ -5,7 +5,7 @@ category: effect
 layer: prelude
 tags: [streaming, data-processing, chunked, backpressure, lazy]
 source_files:
-  - kyo-prelude/shared/src/main/scala/kyo/Stream.scala
+  - /p/gh/kyo/kyo-prelude/shared/src/main/scala/kyo/Stream.scala
 source_commit: 9bab8d00
 api_surface: [Stream.init, Stream.range, Stream.from, Stream.run, Stream.runSeq, Stream.foreach, Stream.fold, Stream.map, Stream.filter, Stream.flatMap, Stream.take, Stream.drop, Stream.concat]
 related: [kyo-effect-emit, kyo-effect-channel]

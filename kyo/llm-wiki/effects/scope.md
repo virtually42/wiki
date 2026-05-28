@@ -5,7 +5,7 @@ category: effect
 layer: core
 tags: [resources, lifecycle, acquire-release, finalization, closeable]
 source_files:
-  - kyo-core/shared/src/main/scala/kyo/Scope.scala
+  - /p/gh/kyo/kyo-core/shared/src/main/scala/kyo/Scope.scala
 source_commit: 9bab8d00
 api_surface: [Scope.acquire, Scope.acquireRelease, Scope.ensure, Scope.run]
 related: [kyo-effect-async, kyo-concept-resource-management]

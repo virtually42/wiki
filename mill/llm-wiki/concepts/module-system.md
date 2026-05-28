@@ -3,8 +3,8 @@ id: module-system
 title: Module System
 section: concepts
 source_files:
-  - core/api/src/mill/api/Module.scala
-  - core/api/src/mill/api/ModuleCtx.scala
+  - /p/gh/mill/core/api/src/mill/api/Module.scala
+  - /p/gh/mill/core/api/src/mill/api/ModuleCtx.scala
 source_commit: 41ce6c977c4
 related:
   - concepts/task-system.md

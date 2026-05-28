@@ -4,7 +4,7 @@ type: external-lib
 repo: /p/gh/mill
 origin: https://github.com/com-lihaoyi/mill.git
 upstream: https://github.com/com-lihaoyi/mill.git
-wiki_branch: llm-wiki
+wiki_path: mill/llm-wiki/
 last_observed: 2026-05-24
 commit: 41ce6c977c4
 wiki_sections:
@@ -22,32 +22,26 @@ Mill is our build tool for all Scala 3 projects (JVM, JS, Native). Used to
 define multi-module builds, manage dependencies, cross-compile, test, and
 publish artifacts. Central to the monorepo build system.
 
-## Wiki Branch
+## Wiki Location
 
-```bash
-cd /p/gh/mill && git checkout llm-wiki
-# Query entry point:
-cat llm-wiki/index.md
-```
+The wiki lives in this repo at `mill/llm-wiki/`. Source code lives at `/p/gh/mill`.
 
-The `llm-wiki/` folder contains 40 pages across 6 sections with YAML
-frontmatter for grep-based discovery. See `llm-wiki/CLAUDE.md` for
-query strategy.
+Pages reference source files with absolute paths (e.g. `/p/gh/mill/libs/scalalib/src/mill/scalalib/ScalaModule.scala`).
 
 ## Refresh Procedure
 
 ```bash
+# 1. Update source repo
 cd /p/gh/mill
-git checkout llm-wiki
-git fetch origin   # this is the upstream repo (no fork yet)
+git fetch origin   # cloned directly from upstream, no fork
 git rebase origin/main
-# llm-wiki/ folder never conflicts — upstream doesn't have it
-# Then run ingest-external refresh mill to update stale pages
+
+# 2. Back in wiki, update stale pages against new source
+# Compare source_commit in page frontmatter against current HEAD
 ```
 
 ## Note
 
 This repo is cloned directly from upstream (com-lihaoyi/mill), not
-from a personal fork. The `llm-wiki` branch is local only. If a fork
-is created later, update `origin` to point to the fork and add the
-upstream remote.
+from a personal fork. If a fork is created later, update `origin` to
+point to the fork and add the upstream remote.

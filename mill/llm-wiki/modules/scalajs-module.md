@@ -3,7 +3,7 @@ id: scalajs-module
 title: ScalaJSModule
 section: modules
 source_files:
-  - libs/scalajslib/src/mill/scalajslib/ScalaJSModule.scala
+  - /p/gh/mill/libs/scalajslib/src/mill/scalajslib/ScalaJSModule.scala
 source_commit: 41ce6c977c4
 related:
   - modules/scala-module.md

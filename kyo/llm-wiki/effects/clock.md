@@ -5,7 +5,7 @@ category: effect
 layer: core
 tags: [time, clock, instant, testing, time-control]
 source_files:
-  - kyo-core/shared/src/main/scala/kyo/Clock.scala
+  - /p/gh/kyo/kyo-core/shared/src/main/scala/kyo/Clock.scala
 source_commit: 9bab8d00
 api_surface: [Clock.now, Clock.nowMonotonic, Clock.sleep, Clock.repeatAtInterval, Clock.withTimeControl, Clock.withTimeShift]
 related: [kyo-data-duration, kyo-effect-async]
