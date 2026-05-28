@@ -11,6 +11,20 @@ used_by: []
 version_notes: "1.1.2 — Mill 1.x series with .mill file support"
 ---
 
+## Deep Reference
+
+This page is a one-stop orientation for our use of Mill. For the
+**upstream API surface** — every module type, configuration option,
+CLI command, and internal concept — read
+[[mill/llm-wiki/index]]. That wiki is mechanically derived from
+`/p/gh/mill` and tracks the upstream commit each page was extracted
+from.
+
+The relationship between this page (our position) and the Mill
+llm-wiki (upstream knowledge) is documented in
+[[syntheses/wiki-layering-and-external-lib-wikis]]; the bridge file
+with upstream commit / sections lives at [[sources/raw/code/mill]].
+
 ## Overview
 
 Mill is the build tool for all Scala 3 projects. It provides first-class
@@ -271,5 +285,11 @@ Key Mill commands for the wiki's implement/test/run operations:
 
 ## Links
 
-- [Mill documentation](https://mill-build.org/docs)
+- [Mill documentation](https://mill-build.org/docs) — upstream docs site
+- [[mill/llm-wiki/index]] — upstream API reference (Layer 3)
+- [[sources/raw/code/mill]] — bridge file (last observed commit, sections)
+- [[syntheses/wiki-layering-and-external-lib-wikis]] — how this page relates to the Mill llm-wiki
 - [[tech/decisions/deps-single-file]]
+- [[tech/guides/mill-cross-platform]]
+- [[tech/guides/mill-monorepo]]
+- [[tech/guides/mill-dependency-management]]

@@ -24,6 +24,8 @@ descriptive pages create awareness.
 ## Stack (descriptive)
 
 - [stack/mill.md](stack/mill.md) — Mill build tool (1.1.2, Scala 3 cross-platform)
+- [stack/kyo.md](stack/kyo.md) — Kyo effect system (1.0-RC1, pending type + algebraic effects)
+- [stack/airstream.md](stack/airstream.md) — Airstream reactive streams (Scala.js, used via Laminar)
 
 ## Capabilities (descriptive)
 

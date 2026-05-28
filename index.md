@@ -43,14 +43,34 @@ projects have no on-disk presence yet and are not evaluated by `lint`.
 ## Sources
 
 - [sources/raw/docs/](sources/raw/docs/) — articles, papers, specs (immutable)
-- [sources/raw/code/](sources/raw/code/) — code repository pointers
+- [sources/raw/code/](sources/raw/code/) — code repository pointers + external-lib bridges
 - [sources/summaries/](sources/summaries/) — one summary per source
+
+---
+
+## External Library Wikis
+
+Query-optimized, upstream-derived wikis for libraries we use heavily.
+Each is a self-contained Layer-3 knowledge base; a bridge file under
+`sources/raw/code/` records the upstream commit and section taxonomy.
+See [[syntheses/wiki-layering-and-external-lib-wikis]] for the
+relationship between these wikis and our tech layer.
+
+| Library | Wiki | Bridge | Source repo |
+|---------|------|--------|-------------|
+| Mill | [mill/llm-wiki/](mill/llm-wiki/index.md) | [[sources/raw/code/mill]] | `/p/gh/mill` |
+| Kyo | [kyo/llm-wiki/](kyo/llm-wiki/index.md) | [[sources/raw/code/kyo]] | `/p/gh/kyo` |
+| Airstream | [Airstream/llm-wiki/](Airstream/llm-wiki/index.md) | [[sources/raw/code/airstream]] | `/p/gh/Airstream` |
+
+Procedure for creating, refreshing, or querying these wikis:
+[[tech/guides/ingest-external]].
 
 ---
 
 ## Cross-Project Syntheses
 
 - [syntheses/](syntheses/) — cross-cutting analyses spanning multiple projects
+- [[syntheses/wiki-layering-and-external-lib-wikis]] — three-layer model (meta / our tech / external-lib wikis) and Mill ↔ tech-layer cross-walk
 
 ---
 

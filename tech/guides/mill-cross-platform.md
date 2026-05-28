@@ -223,3 +223,13 @@ object compositor extends ScalaNativeModule:
 - No `java.io.File` in shared code (use os-lib or platform-specific sources)
 - Threading models differ: JVM has real threads, Native has optional, JS is single-threaded
 - String interpolation with `\n` works everywhere but file paths must use os-lib's `os.sep`
+
+## Upstream Reference
+
+For the mechanical Mill API behind these patterns:
+
+- [[mill/llm-wiki/configuration/cross-building]] — `Cross[]`, `CrossScalaModule`, `PlatformScalaModule`
+- [[mill/llm-wiki/recipes/multi-platform]] — upstream recipe for JVM/JS/Native from one definition
+- [[mill/llm-wiki/modules/scalajs-module]] — `ScalaJSModule` options
+- [[mill/llm-wiki/modules/scala-native-module]] — `ScalaNativeModule` options
+- [[syntheses/wiki-layering-and-external-lib-wikis]] — how this guide relates to the Mill llm-wiki

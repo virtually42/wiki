@@ -246,3 +246,21 @@ to run only tasks affected by changes since a baseline:
    If module A's `generatedSources` reads module B's output, Mill resolves
    this correctly but it's an implicit dependency. Make it a `moduleDep`
    or document it clearly.
+
+## Upstream Reference
+
+For the mechanical Mill API behind these patterns:
+
+- [[mill/llm-wiki/patterns/multi-module]] — upstream multi-module
+  pattern and module discovery
+- [[mill/llm-wiki/patterns/build-file-structure]] — `build.mill` /
+  `package.mill` conventions
+- [[mill/llm-wiki/concepts/module-system]] — `Module`, nesting,
+  hierarchy resolution
+- [[mill/llm-wiki/concepts/build-graph]] — DAG, dependency resolution,
+  topological sort (relevant when reasoning about
+  `transitiveModuleDeps`)
+- [[mill/llm-wiki/cli/task-resolution]] — how `__` wildcards and
+  `./mill resolve` work (the introspection commands in this guide)
+- [[syntheses/wiki-layering-and-external-lib-wikis]] — how this guide
+  relates to the Mill llm-wiki

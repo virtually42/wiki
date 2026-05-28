@@ -217,3 +217,172 @@ row that the agent did not add; flagged to the human in
 conversation in case the path was intended to be `scratch/**`.
 
 Refs: [[meta/ownership]], [[meta/schema]], [[meta/drift]]
+
+## [2026-05-28] ingest | Throw Away the Irrelevant (De Goes on CoRecursive)
+
+Ingested `sources/raw/docs/throw_away_the_irrelevant_john_de_goes_podcast.txt`
+(CoRecursive interview with John A De Goes, Adam Gordon Bell host,
+circa 2018 — Scalaz 8 / Cats 1.0 era). Created summary at
+`sources/summaries/throw_away_the_irrelevant_john_de_goes_podcast.md`
+covering twelve positions: polymorphism vs descriptive monomorphic
+names, principled type classes with algebraic laws, data structures
+as premature specialization, performance characteristics belonging
+in type-class contracts, type classes vs OO traits in Scala, the case
+for `IO` everywhere with capability-type-class refinement, the three
+generations of Scala effect monads, why monad-transformer stacks
+collapse on the JVM (heap churn + megamorphism), the
+`newtype`-over-`IO` workaround, why Scala FP must diverge from
+Haskell, the Cats vs Scalaz 8 split, and meta-commentary on writing
+style.
+
+Flagged two follow-up candidates for the tech layer:
+
+- `tech/patterns/principled-polymorphism` — single-source as of now;
+  promotion needs a second corroborating source or project synthesis.
+- `tech/patterns/anti/monad-transformer-stacks-on-jvm` — strong
+  single-source evidence; second source desirable before promotion.
+
+Also flagged an apparent tension between this source (polymorphic
+`M[_]` with capabilities) and
+[[sources/summaries/functional_domain_modeling_zio2_debasish_ghosh]]
+(concrete `IO[E,A]` in service contracts) — likely different
+boundaries (internal helpers vs public service contracts), worth
+synthesizing later.
+
+Refs: [[sources/summaries/throw_away_the_irrelevant_john_de_goes_podcast]],
+[[sources/summaries/introduction_to_functional_design_john_de_goes]],
+[[sources/summaries/functional_domain_modeling_zio2_debasish_ghosh]],
+[[tech/patterns/functional-domain-design]]
+
+## [2026-05-28] edit | Airstream llm-wiki reachability fixes (mirror of Mill / Kyo)
+
+Applied the same one-way Layer 2 → Layer 3 reachability pattern to
+Airstream that was previously applied to Mill and Kyo. Before this
+edit, the only Layer-2 reference to the Airstream llm-wiki was the
+*External Library Wikis* table row in [[index]] and the bridge file
+at [[sources/raw/code/airstream]].
+
+Changes:
+
+- Created [[tech/stack/airstream]] (descriptive, scope: global)
+  with the same shape as [[tech/stack/mill]] and [[tech/stack/kyo]]:
+  *Deep Reference* block at the top pointing at
+  [[Airstream/llm-wiki/index]], pointer to the bridge file, pointer
+  to the layering synthesis, mention of the
+  `frontend:airstream-ownership-patterns` agent skill, plus a lean
+  orientation covering type hierarchy, a core reading list keyed to
+  Layer-3 pages, the ownership pitfall, dependency coordinates
+  (Scala.js only), and the relation to
+  [[tech/patterns/functional-domain-design]].
+- [[tech/index]] now lists `stack/airstream.md` under Stack
+  alongside `stack/mill.md` and `stack/kyo.md`.
+- [[syntheses/wiki-layering-and-external-lib-wikis]] updated:
+  *Generalization* now records that **all three** registered
+  external-lib wikis have a Layer-2 anchor; *Open questions*
+  retroactively recognizes that "wait for ADR adoption" was the
+  wrong trigger condition — reachability and policy adoption are
+  separate concerns, and future external-lib additions should
+  create the stack page at the same time as the bridge file. Links
+  section and sources frontmatter extended.
+
+Not done (out of scope):
+- No Airstream guides under `tech/guides/` (no Airstream guide
+  currently exists in Layer 2; nothing to retrofit).
+- No back-links from `Airstream/llm-wiki/` into Layer 2 (one-way
+  coupling preserved).
+- No new ADR adopting Airstream — page created ahead of formal
+  adoption, same as the Kyo case earlier in this session.
+
+The three reachability fixes (Mill → Kyo → Airstream) together
+close out the synthesis's original "Generalization to other
+external libs" section — every registered bridge now has at least
+one inbound Layer-2 link from a `tech/stack/<name>.md` page.
+
+Refs: [[tech/stack/airstream]], [[tech/index]],
+[[syntheses/wiki-layering-and-external-lib-wikis]],
+[[Airstream/llm-wiki/index]], [[sources/raw/code/airstream]]
+
+## [2026-05-28] edit | Kyo llm-wiki reachability fixes (mirror of Mill)
+
+Applied the same one-way Layer 2 → Layer 3 reachability pattern to
+Kyo that was previously applied to Mill. Before this edit, the only
+Layer-2 reference to the Kyo llm-wiki was the *External Library
+Wikis* table row in [[index]] and the bridge file at
+[[sources/raw/code/kyo]] — a human or agent landing in `tech/` had
+no obvious hint that `kyo/llm-wiki/` existed.
+
+Changes:
+
+- Created [[tech/stack/kyo]] (descriptive, scope: global) with the
+  same shape as [[tech/stack/mill]]: *Deep Reference* block at the
+  top pointing at [[kyo/llm-wiki/index]], pointer to the bridge file,
+  pointer to the layering synthesis, list of `scala:kyo-*` agent
+  skills, plus a lean orientation covering module layers, core
+  concepts, an effects cheat-sheet, data types, dependency
+  coordinates, conventions, and the relation to
+  [[tech/patterns/functional-domain-design]].
+- [[tech/index]] now lists `stack/kyo.md` under Stack.
+- [[syntheses/wiki-layering-and-external-lib-wikis]] updated:
+  *Generalization to other external libs* records the Kyo fix is
+  applied; *Open questions* narrows the unresolved item to
+  Airstream; sources list extended to include the new Kyo pages.
+
+Not done (out of scope):
+- No Kyo guides under `tech/guides/` (no Kyo guide currently exists
+  in Layer 2; nothing to retrofit).
+- No back-links from `kyo/llm-wiki/` into Layer 2 (the synthesis is
+  explicit that the coupling must remain one-way).
+- Airstream still has no Layer-2 footprint; deferred until an
+  adopter materializes.
+
+The Layer-2 footprint for Kyo is created ahead of formal ADR
+adoption — compositor lists Kyo in its stack but has no ADR for it
+yet. The user authorized creating the stack page anyway to fix
+reachability now rather than wait for the ADR trigger condition.
+
+Refs: [[tech/stack/kyo]], [[tech/index]],
+[[syntheses/wiki-layering-and-external-lib-wikis]],
+[[kyo/llm-wiki/index]], [[sources/raw/code/kyo]]
+
+## [2026-05-28] synthesis | Wiki layering and Mill llm-wiki reachability
+
+Created `syntheses/wiki-layering-and-external-lib-wikis.md`. Names the
+three layers on disk — Meta (rules of engagement), Content (our tech
+layer + projects + sources), and External-lib wikis
+(`mill/llm-wiki/`, `kyo/llm-wiki/`, `Airstream/llm-wiki/`) — and
+describes the bridge mechanism via `sources/raw/code/<lib>.md` files
+with `type: external-lib` frontmatter. Includes a topic-level
+cross-walk between our Layer-2 Mill pages and the Layer-3
+`mill/llm-wiki/` pages.
+
+Applied reachability fixes so the Mill llm-wiki is discoverable from
+where readers actually land:
+
+- `index.md` — added an *External Library Wikis* section listing
+  Mill, Kyo, Airstream with bridge-file links; surfaced the new
+  synthesis under Cross-Project Syntheses.
+- `tech/stack/mill.md` — added a *Deep Reference* block near the top
+  pointing at `mill/llm-wiki/index.md` and the synthesis; expanded
+  the Links section to include the llm-wiki, bridge, and the three
+  Mill guides.
+- `tech/guides/mill-cross-platform.md`,
+  `tech/guides/mill-monorepo.md`,
+  `tech/guides/mill-dependency-management.md` — each gained an
+  *Upstream Reference* block linking the most relevant
+  `mill/llm-wiki/` pages and the synthesis.
+
+Fixes are intentionally one-way (Layer 2 → Layer 3) to keep the
+external-lib wikis self-contained and refreshable without coupling
+to our opinions.
+
+Two flagged candidates for future work (not done now):
+
+- A `tech/stack/kyo.md` / `tech/stack/airstream.md` analogous to
+  `tech/stack/mill.md` once those libraries pick up ADR adopters.
+- A lint check that every `sources/raw/code/*.md` bridge has at least
+  one inbound Layer-2 link, so a future llm-wiki cannot be silently
+  orphaned.
+
+Refs: [[syntheses/wiki-layering-and-external-lib-wikis]],
+[[index]], [[tech/stack/mill]], [[mill/llm-wiki/index]],
+[[sources/raw/code/mill]]

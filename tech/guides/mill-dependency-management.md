@@ -289,3 +289,14 @@ triggered on deps/ changes.
 1. Should Scala Steward or Renovate manage platform versions (scala, scalaNative, scalaJS) as well, or are those pinned manually?
 2. How does the offline mirror regeneration interact with the Nix flake lock? Both need updating atomically.
 3. Should the monorepo use `mill-contrib-versionfile` for project-internal versioning?
+
+## Upstream Reference
+
+For the mechanical Mill API behind dependency declarations:
+
+- [[mill/llm-wiki/configuration/dependencies]] — `mvnDeps`, the
+  `mvn"..."` interpolator, cross-version syntax (`:`, `::`, `:::`)
+- [[tech/decisions/deps-single-file]] — the normative decision this
+  guide informed
+- [[syntheses/wiki-layering-and-external-lib-wikis]] — how this guide
+  relates to the Mill llm-wiki
