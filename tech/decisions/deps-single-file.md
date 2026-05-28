@@ -10,7 +10,8 @@ applies_to:
   languages: [scala, scala-native, scala-js]
   domains: [any]
   excludes: []
-used_by: []
+used_by:
+  - projects/compositor/adr/0002-adopt-deps-single-file.md
 sources:
   - tech/guides/mill-dependency-management.md
 supersedes: []

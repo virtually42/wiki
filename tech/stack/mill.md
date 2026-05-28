@@ -5,7 +5,7 @@ kind: descriptive
 status: active
 scope: global
 created: 2026-05-24
-updated: 2026-05-24
+updated: 2026-05-28
 capabilities: [build, dev-environment, testing]
 used_by: []
 version_notes: "1.1.2 — Mill 1.x series with .mill file support"
@@ -106,46 +106,65 @@ module/
 
 ## Dependency Management
 
-### The deps/ pattern
+**Normative**: see [[tech/decisions/deps-single-file]] —
+a single `deps/Dependencies.mill` file with inline `mvn"…"` coordinates.
+`Versions.mill` is **rejected** and must not be created.
+
+### The deps/ pattern (single-file)
 
 A `deps/` directory at project root containing:
 
-- `package.mill` — marker extending `Module`
-- `Versions.mill` — version string constants
+- `package.mill` — marker (`package build.deps`)
 - `Dependencies.mill` — `mvn"group::artifact::version"` declarations
+  and platform versions
 
 ```scala
-// deps/Versions.mill
-package build.deps
-object Versions:
-  val scala       = "3.8.2"
-  val scalaNative = "0.5.10"
-  val kyo         = "1.0-RC1"
-
 // deps/Dependencies.mill
 package build.deps
-import build.deps.{Versions => V}
-object Kyo:
-  def kyoCore = mvn"io.getkyo::kyo-core::${V.Kyo.kyo}"
+import mill.*, scalalib.*
+
+// Grouped versions for multi-artifact libraries
+private val kyoV   = "1.0-RC1"
+private val tapirV = "1.11.11"
+
+object Deps:
+  val kyoCore    = mvn"io.getkyo::kyo-core::$kyoV"
+  val kyoPrelude = mvn"io.getkyo::kyo-prelude::$kyoV"
+  val tapirCore  = mvn"com.softwaremill.sttp.tapir::tapir-core::$tapirV"
+  val osLib      = mvn"com.lihaoyi::os-lib::0.11.7"
+  val munit      = mvn"org.scalameta::munit::1.2.1"
+
+object Platform:
+  val scala       = "3.8.2"
+  val scalaNative = "0.5.10"
+  val scalaJS     = "1.20.2"
 ```
 
-Consumed in modules via `import deps.{Versions, Dependencies}` or
-`import build.deps.{Versions => V, ...}`.
+Rules (from the decision):
+
+- One file, one place per dependency.
+- Multi-artifact libraries use a `private val` for the shared version.
+- Single-artifact libraries inline the version in the `mvn"…"` string.
+- Platform versions live in the same file under `object Platform`.
+- No nested version objects, no `lazy val`, no separate `Versions.mill`.
+
+Consumed in modules via `import build.deps.Deps`.
 
 ### Platform availability markers
 
-Dependencies use `::` (double-colon) for cross-platform artifacts and
-`:` (single-colon) for platform-specific ones. The deps file documents
-platform constraints with comments:
+Dependencies use `::` (double-colon) for cross-platform Scala artifacts
+and `:` (single-colon) for platform-specific ones. Document platform
+constraints with comments:
 
 ```scala
 /** N => Only available on Native
   * J => Only available on JVM
   * S => Only available on Scala.js
   */
-object Tapir:
+object Deps:
   /** J - JVM only */
-  def nettyServerSync = mvn"com.softwaremill.sttp.tapir::tapir-netty-server-sync:${V.Tapir.tapir}"
+  val tapirNettySync =
+    mvn"com.softwaremill.sttp.tapir::tapir-netty-server-sync:$tapirV"
 ```
 
 ### mvn vs ivy string syntax
@@ -253,4 +272,4 @@ Key Mill commands for the wiki's implement/test/run operations:
 ## Links
 
 - [Mill documentation](https://mill-build.org/docs)
-- [[tech/decisions/build-system-mill]] (pending)
+- [[tech/decisions/deps-single-file]]

@@ -29,13 +29,14 @@ Cross-project knowledge: decisions, patterns, architecture, stack, capabilities,
 
 | Project | Status | Stack | Description |
 |---------|--------|-------|-------------|
-| compositor | active | Scala Native, Kyo, Wayland, wlroots | Wayland compositor |
-| webapp | active | Scala 3, Kyo, Tapir, PostgreSQL | Web application |
-| cli-tool | active | Scala 3, Kyo, SQLite | CLI utility |
-| infra | active | NixOS, PostgreSQL, Envoy | Infrastructure configs |
+| compositor | active (design-stage) | Scala Native, Kyo, Wayland, wlroots | Wayland compositor |
+| webapp | planned | Scala 3, Kyo, Tapir, PostgreSQL | Web application |
+| cli-tool | planned | Scala 3, Kyo, SQLite | CLI utility |
+| infra | planned | NixOS, PostgreSQL, Envoy | Infrastructure configs |
 
 Each project has: `projects/<name>/index.md` with ADRs, designs, plans,
-tickets, architecture, interfaces, risk, log, and syntheses.
+tickets, architecture, interfaces, risk, log, and syntheses. `planned`
+projects have no on-disk presence yet and are not evaluated by `lint`.
 
 ---
 

@@ -27,6 +27,10 @@ and naming/linking conventions.
 | code-source | source | sources/raw/code/ | Pointer to a code repository |
 | external-lib | source | sources/raw/code/ | Pointer to an external library with llm-wiki in this repo |
 
+### Out-of-schema directories
+
+- `scratch/` — personal working notes. No frontmatter requirements, no lint enforcement, no ownership share with the agent.
+
 ---
 
 ## Page Type Formats
@@ -574,3 +578,5 @@ promoted_at: 2026-05-15
 ```
 
 Demotion: set `status: deprecated` and `superseded_by:`.
+
+

@@ -1,0 +1,247 @@
+Functional Domain Modeling: The ZIO 2 Way
+Speaker: Debasish Ghosh
+Date: 2022-09-22
+Format: 39-slide presentation (SlideShare)
+URL: https://www.slideshare.net/slideshow/functional-domain-modeling-the-zio-2-way/253277754
+
+NOTE: This is a text extraction obtained via WebFetch. The original source is an
+image-based slide deck; diagrams and any narration are not captured here. Treat
+this as a staged snapshot pending human review — move to sources/raw/docs/ to
+keep, or delete to discard.
+
+================================================================================
+SLIDE-BY-SLIDE CONTENT
+================================================================================
+
+Slide 1 — Title
+  Functional Domain Modeling: The ZIO 2 way
+
+Slide 2 — Domain Model Definition
+  "A domain model in problem solving and software engineering is a conceptual
+  model of all the topics related to a specific problem" (Wikipedia)
+  - Describes entities, attributes, roles, relationships, and constraints
+  - Does not describe solutions
+
+Slides 3-4 — Reference materials (MSDN)
+
+Slide 5 — Pattern Language for Domain Modeling (introduction)
+
+Slide 6 — Common Vocabulary
+  First element of the pattern language
+
+Slide 7 — Modularization
+  Second structural element
+
+Slide 8 — Entities / Value Objects
+  - Nouns in the model
+  - Pure objects
+  - Domain vocabulary naming
+  - Strongly typed (newtypes, refinement types)
+
+Slide 9 — Repositories
+  - Object storage and access provision
+  - Abstractions with effects
+  - Names align with aggregate roots
+  - Simple persistence interfaces
+  - Decouples model from persistence technology
+
+Slide 10 — Repository Quote
+  "Client code ignores repository implementation, developers do not"
+  (Eric Evans, DDD Blue Book)
+
+Slide 11 — Domain Services
+  - Coarse-grained abstractions
+  - Domain concepts (not entity-specific)
+  - Interface defined via other model elements
+  - Abstractions with effects
+
+Slide 12 — Pattern Language Recap
+
+Slide 13 — Account Entity Definition
+  final case class Account private (
+    no: AccountNo,
+    name: AccountName,
+    dateOfOpen: ZonedDateTime,
+    //..
+  )
+  - Algebraic data type model
+  - Domain-derived type names
+  - Rich semantics via newtypes / refinement types (zio-prelude)
+
+Slide 14 — Account Companion Object
+  object Account {
+    def tradingAccount(...): Validation[String, Account]
+    private[model] def validateAccountNo(...)
+    def close(a: Account, ...): Validation[String, Account]
+  }
+  - Smart constructors
+  - Domain validations
+  - Domain behavior encapsulation
+  - Compositional validations via zio-prelude
+
+Slide 15 — Model Characteristics
+  - Pure model
+  - Functional core
+  - Compositional with zio-prelude
+
+Slide 16 — AccountRepository Trait
+  trait AccountRepository {
+    def queryByAccountNo(no: AccountNo): Task[Option[Account]]
+    def store(a: Account): Task[Account]
+    def store(as: List[Account]): Task[Unit]
+    def allOpenedOn(openedOnDate: LocalDate): Task[List[Account]]
+  }
+
+Slide 17 — Repository Characteristics
+  - Effectful contracts
+  - Concrete ZIO effects (unlike tagless final)
+  - Less parametric than tagless final
+  - No environment dependencies
+  - zio.Task[A] => ZIO[Any, Throwable, A]
+
+Slide 18 — AccountRepositoryLive Implementation
+  final case class AccountRepositoryLive(
+    xaResource: Resource[Task, Transactor[Task]]
+  ) extends AccountRepository {
+    def all: Task[List[Account]] =
+      xaResource.use { xa =>
+        SQL.getAll.to[List].transact(xa).orDie
+      }
+  }
+  - Implementation details
+  - Functional core
+
+Slide 19 — ZLayer Definition
+  object AccountRepositoryLive extends CatzInterop {
+    val layer: ZLayer[DBConfig, Throwable, AccountRepository] = {
+      ZLayer.scoped(for {
+        cfg <- ZIO.service[DBConfig]
+        transactor <- mkTransactor(cfg)
+      } yield new AccountRepositoryLive(transactor))
+    }
+  }
+  - ZLayer as service creation recipe
+  - Factory for domain artifacts
+  - Scoped API for resource lifetime management
+  - Dependency injection mechanism
+
+Slide 20 — Repository Advantages (Eric Evans)
+  - Simple persistent object management model
+  - Decouples design from persistence technology / strategies
+  - Communicates object access design decisions
+  - Enables easy test dummy implementations
+
+Slide 21 — Single Interface Principle
+  - Return types abstract values and failures
+  - ZIO effects handle failure semantics
+
+Slide 22 — Multiple Implementations
+  - Dynamic injection via ZLayers
+  - Compositional dependency resolution
+
+Slide 23 — Effect Semantics
+  - Concrete ZIO effects clarify failure handling
+  - Explicit environment dependencies
+  - Transparent exception types
+
+Slide 24 — Emphasis on ZLayers
+
+Slide 26 — TradingService Trait
+  trait TradingService {
+    def getAccountsOpenedOn(openDate: LocalDate):
+      IO[TradingError, List[Account]]
+    def getTrades(...): IO[TradingError, List[Trade]]
+    def getTradesByISINCodes(...): IO[TradingError, List[Trade]]
+    def orders(...): IO[TradingError, NonEmptyList[Order]]
+    def execute(...): IO[TradingError, NonEmptyList[Execution]]
+    def allocate(...): IO[TradingError, NonEmptyList[Trade]]
+  }
+  - Effectful contracts
+  - Concrete ZIO effects publishing all exceptions / values
+  - Less parametric than tagless final
+  - No environment dependencies
+  - Coarse-grained abstractions
+  - Domain vocabulary naming
+
+Slides 27-28 — TradingService Continued
+
+Slide 29 — generateTrade Function
+  final def generateTrade(
+    frontOfficeInput: GenerateTradeFrontOfficeInput,
+    userId: UserId
+  ): IO[Throwable, NonEmptyList[Trade]] = {
+    for {
+      orders     <- orders(frontOfficeInput.frontOfficeOrders)
+      executions <- execute(...)
+      trades     <- allocate(...)
+    } yield trades
+  }
+  - Functional core composition
+
+Slide 30 — TradingServiceLive Implementation
+  final case class TradingServiceLive(
+    ar: AccountRepository,
+    or: OrderRepository,
+    er: ExecutionRepository,
+    tr: TradeRepository
+  ) extends TradingService
+  - Constructor-passed dependencies
+  - Automatic ZLayer integration
+  - Interface-only dependencies (not implementations)
+
+Slide 32 — Dependency Wiring
+  ZIO.serviceWithZIO[TradingService](service => //..)
+    .provide(
+      AccountRepositoryLive.layer,
+      TradingServiceLive.layer,
+      OrderRepositoryLive.layer,
+      TradeRepositoryLive.layer,
+      ExecutionRepositoryLive.layer,
+      config.live
+    )
+
+Slide 33 — ZLayers Benefits
+  - Declarative service instance construction
+  - Automatic dependency graph creation
+  - Composable structure
+  - Asynchronous, non-blocking operations
+  - Parallel acquisition (vs class constructors)
+
+Slide 34 — Domain Model Layers
+  Entities / Value Objects: pure, functional, statically typed, zio-prelude types
+
+Slide 35 — Repositories Layer
+  - Plain Scala traits
+  - One per aggregate root
+  - Effectual contracts
+  - Concrete ZIO effects
+  - Persistence platform-dependent
+  - Constructor-passed dependencies
+  - Multiple implementations per contract
+
+Slide 36 — Domain Services Layer
+  - Coarse-grained designs
+  - Multi-entity interactions
+  - Effectual contracts
+  - Concrete ZIO effects
+  - Constructor dependencies
+  - Repository interface dependencies (not implementations)
+
+Slide 37 — Application Layer
+  - Complete architecture integration
+  - ZLayer orchestration
+
+Slide 38 — Full Architecture Diagram (image, not extracted)
+
+Slide 39 — Closing
+  "Questions?"
+
+================================================================================
+KEY CONCEPTS (extractor's summary)
+================================================================================
+
+- Pure Model: algebraic data types with domain vocabulary
+- Repositories: effectful abstractions with concrete ZIO types
+- Domain Services: coarse-grained orchestrators
+- ZLayers: declarative dependency injection and resource management
+- Effect Semantics: explicit failure handling and environment clarity

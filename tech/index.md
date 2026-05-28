@@ -11,7 +11,7 @@ descriptive pages create awareness.
 
 ## Patterns (normative)
 
-*No patterns yet.*
+- [patterns/functional-domain-design.md](patterns/functional-domain-design.md) — Functional Domain Design (immutable model + constructors + operators + encoding choice)
 
 ## Anti-Patterns (normative)
 

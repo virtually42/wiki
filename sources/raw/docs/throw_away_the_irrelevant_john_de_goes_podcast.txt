@@ -1,0 +1,334 @@
+When Your Variable Names Tell on You
+
+John: I cannot actually see any reason at all to use a standard object-oriented style trait instead of a type class.
+
+Adam: Today’s interview is with John De Goes. We talk about performance problems with monad transformers on the JVM, various flavors of IO monads, reasoning about polymorphic code and much more. If you are a Scala developer or would like to be, my team at Tenable is hiring. We are a distributed team working on static analysis of Docker containers for security vulnerabilities. Tenable itself is a great place to work. Our team, as I mentioned, is distributed.
+
+I work from my home office, you could work from yours. I’ll put a link with some details in the show notes and on the web page for this podcast. John A De Goes is the CTO of SlamData. John, welcome to the show. I found you had an interesting take on functional programming. And that might be fun to explore that. So, what is wrong with using descriptive variable names?
+
+John: Right. Descriptive variable names are a code smell, I argue in one of my posts. Yeah. And the reason I say that is I just say it in that way, it’s clickbaity. I say that in a way to grab people’s attention. What I actually mean by that is that oftentimes when your variable names are very descriptive, that is you can say this is a Java of being proxy factory or something else like that, you know exactly what it is. And when you know what it is, it necessarily implies that it’s not a polymorphic type.
+
+So, it’s a so-called monomorphic type, the type is fixed, it’s not a variable. And what that means is your code is specialized to a specific type. And there are lots of drawbacks to writing tons and tons of code with monomorphic types. And one of the principled ones is just that, once you write a type signature for a function that’s entirely monomorphic, the number of ways you can implement that function and have the compiler type check it goes way, way, way up.
+
+So, in polymorphic code, classic example is, for all A to A, there’s only one way to implement that function. Whereas in monomorphic code, if we have something like string to string, then you can imagine that there’s an infinite number of ways to implement that function. So, in general, I always encourage developers to write as polymorphic code as humanly possible, get rid of all the types. Prevent yourself from knowing anything about what structures you’re operating on.
+
+And if you do that, if you do it pervasively, and then if you use principled type classes to inject the minimum amount of structure necessary for you to actually do your task, then the number of ways you can implement these functions will go way, way, way, way down. And hopefully, in ideal case, you’ll find there’s only a few sensible ways to implement the function, and one of them is the one that you want.
+
+And then the other thing that you do is not only do you make it harder to introduce bugs by cutting down on the size of the implementation space, but you also make the code much more reusable. Because now, it’s able to solve not just one problem, perhaps, but potentially a whole family of problems with totally different types, totally different data structures.
+
+So, that’s why I say if your code is so monomorphic that you can give everything a ritually descriptive variable name, then most likely, you’re missing some opportunities there for abstraction, and for reuse, and for polymorphism, that are going to make your code a lot safer and cut down on the odds of defects and make it easier to maintain and easier to reuse over time.
+Polymorphism Pays Off Even When You Never Reuse It
+
+Adam: So, do you think, is that still true if reuse doesn’t happen? So, I abstract, I pull out some portion of code and because the logic in it actually doesn’t refer to anything except for the structure, I can make it fully polymorphic just like changing the shape of something or returning it. But it’s only used in one place. Is it still useful to have it polymorphic in that case?
+
+John: I would say you can’t necessarily say it’s always useful. Because I can imagine situations in which it’s not useful and just add to boilerplate and doesn’t introduce any additional safety. But I find in most cases, if you can make something polymorphic, then in a language like Haskell or a PureScript or any other language with full type inference, it often does make a lot of sense to do that.
+
+Excuse me, because even if you don’t achieve reuse, even if you still use that function in one place and in one way with specific concrete data types, you’re still making it harder for that function to go wrong. Because it knows less about the types, it means that first off, your initial implementation is more likely to be correct. But that’s relatively trivial savings. You can write something once and you can make sure it’s right, and then it’s good to go.
+
+And the cost of that is constant relative to the size of the function. The real savings is as that function is maintained over time, if it’s highly polymorphic, that means implementation space is constrained. Which means all the other developers who go in there and muck with that function, they’re going to have a harder time screwing it up and introducing defects over time.
+
+And I think this is an example of one of the changes you can make to your style and functional programming that has long-term effects on minimizing the cost of maintenance by making it just harder in general for different parts of the codebase to go wrong. Also, I don’t know if this is true for everyone. But I think that for me and a lot of other people I know who do a lot of functional programming, we find that over time, it becomes easier and easier to reason about polymorphic code.
+
+We gain better intuition for how we’re going to satisfy the type signature, what kinds of things we need in order to be able to satisfy it. And that’s a matter of like, it’s being able to look at a problem and to throw away from that problem all the aspects and elements which are irrelevant to its solution. And that has a very liberating effect on the way you design a solution.
+
+Because suddenly, all these details like the fact that this is a string, or the fact that it’s an interval, or whatever it might be that you’re replacing with a monoid or group or whatever you’re replacing with, it’s suddenly something you don’t need to know about, you don’t need to keep it in your head. And all the different things that you can do with that, you don’t even need to consider them. You can consider them because the types don’t even allow you to consider them.
+
+And I find that that way of using polymorphism to get rid of stuff that we don’t need to keep in our brains right now actually has a tremendously simplifying effect on the way I reasoned about the code and construct it.
+Training Your Brain to Throw Away Details
+
+Adam: So, do you feel like this is a muscle? So, this is a muscle that needs to be developed when you move to a programming language with a more expressive type system?
+
+John: I do feel that. Because I know in the early days, me looking at Haskell code that was highly polymorphic, I’m like, “What is going on here? I have no idea.” Yeah, and the variables are all like A and B and C and D, and they don’t mean anything. It’s a way of thinking about your code that I think has to be learned. And it only has to be learned because a lot of the programming languages that we’re familiar with, and that we grew up coding in are monomorphic, or at least almost monomorphic.
+
+Java has generics, but they’re very constrained in what you can express. And most many, many other programming languages don’t even have that. You’re stuck in C or language without types or anything like that. Then, you look at code and the variable names and their types give you a big clue as to what’s going on. And the concreteness of it makes it easier to understand. And that’s a way of thinking about software that I think we learn.
+
+And after we learn, we forget the fact that we learned it. And then, when we’re exposed to this Haskell style in which everything is highly polymorphic in many cases, our brains are like, what? There’s not enough details for me to understand what’s happening. And then eventually, after you work at it for a while, you’re like, oh, there’s no irrelevant details that I have to consider when I’m trying to prove to myself this is correct, because I’ve thrown all those details away.
+
+They don’t need to clutter my brain. So, it’s a totally different way of looking at the problem, at least it did for me, and it has had to be learned for many others who are like, “Yeah, John, this type signature stuff doesn’t make sense. I want concrete types here. I want to give these big long descriptive names.” And then, I tell them, “Stick with it and concentrate on reading code and trying to become familiar with this style.”
+
+And then six months later or 12 months later, they’re like, “You were right. I don’t want to go back to writing code the old way.” So, I think it is something that it’s like muscle memory, it’s has to be learned, you have to train yourself over time.
+
+Adam: I feel like there’s some switch where you go from when you’re calling a function, looking at the names of the parameters as a description of it, as it may very well do in Java or C, to looking at the types of the parameters as explaining what it does.
+
+John: Yeah, that’s right. Yeah, the names are so important in so much code. But then, when we move over into functional programming that’s highly polymorphic, the names become less important. And the structure, the underlying structure becomes much more important, the structure of the types, or the lack of structuring in some cases.
+Adding Just Enough Structure to Solve the Problem
+
+Adam: And you mentioned in there about having the proper, I forget what you said, the proper type class instances or something, could you explain or?
+
+John: Yeah. So, oftentimes, we’re writing the function, and we would like to make it fully polymorphic. So, for all A, B, C, D, E, F, G, etcetera. But usually, that does not permit many implementations. Usually doesn’t allow us to solve an arbitrary problem inside our codebase. So, in many cases, having a type totally unbounded, unconstrained is insufficient. It’s not enough structure. Our code can’t truly be polymorphic in all types, we’re going to require a little more structure.
+
+And so, how we reintroduce just enough structure to solve the problem, just enough details that allow us to write a problem is we construct principled type classes. And a principled type class can take that type out there that’s arbitrary. And it can give it some capabilities, the minimum amount of capabilities necessary to solve a problem. And by principled, I mean that ideally, the behavior of this type class is given by algebraic laws that we can reason about all possible instances of the type class by using these laws.
+
+And when we have a type class that does have these algebraic laws. We say that the type class is principled, and that’s the ideal type of type class to add additional structure to these polymorphic types in your implementation of the function. So, instead of saying we’re going to work with all As, we’re just going to work with As that have the structure of a semigroup, or the structure of a monoid, or the structure of a ring or one of these other algebraic structures.
+
+And we’re going to be able to use the laws like associativity and so forth that these things have in order to be able to create an implementation that satisfies our requirements. So, polymorphism is how we throw details out of our implementation space to constrain the space of implementations and to make our code much more reusable and easier to get correct. And then, principled type classes are how we add structure back in, just enough structure to be able to solve the problem at hand, no more.
+
+Because any more structure than we actually need to solve the problem is going to end up enlarging that space of implementations, creating more ways for the code to go wrong now and in the future, and also complicate our reasoning about the solution. And it’s interesting that object-oriented programming had similar design principles in the case of interfaces. Because they always used to say, one of the best practices for object-oriented design is to require the smallest interface that you possibly can to solve the problem.
+
+And then also, when you’re building types, provide the maximum interfaces possible to make that type reusable in the most different circumstances. So, I think that this is not new. It’s expressed a bit differently in functional programming. But the overall concept of minimizing the things that you can do with the inputs to a function is a good idea and has been recognized even in object-oriented programming for probably decades, at least a couple of decades.
+Why Data Structures Are the Enemy of Good FP
+
+Adam: So, I saw a post you had something along the lines of, maybe this was another clickbaity article, but data structures are bad. And I feel like this ties in a little bit. Can you explain that concept?
+
+John: Yeah, it does tie in. And again, I have to apologize for clickbait.
+
+Adam: No, controversy is good.
+
+John: You should see, I mean, I posted on my blog, and most of the people who read that blog are functional programmers. So, they know, they get it, they like it. But I posted that on LinkedIn, and you would not be the response I got. Just dozens of comments, and most of them are like, “What the heck is this guy talking?”
+
+Adam: I think there’s a problem too, where people often only read titles, so.
+
+John: They do. And you can tell who read the article by whether or not they agree with you. If they disagree and think it’s crazy, then they only read the title, they stopped there. Anyway, the data structures are antithetical to functional programming, I think, is the blog post you’re referring to. And it’s a very similar idea. And the idea is as follows, a lot of the goodness in functional programming comes from deferring decisions.
+
+And an example of that is a polymorphic function defers the types until much higher in our application. And this deferring also not only constrains implementation, but also enables reuse. And that’s not the only thing we defer. We defer effects til the end of the world. In Haskell, we defer evaluation until the last possible minute when a piece of information is required. So, there’s pervasive deferment.
+
+It doesn’t matter where you look in functional programming, all the good things about it are deferring the destruction of information. Because that just makes systems a lot easier to predict and reason about. And I think one of the areas where programming languages have not done as good a job enabling us to defer decisions is data structures. Because many times, you’ll look at a function and it will produce a concrete data structure, even though it doesn’t necessarily need to do that.
+
+And an example, let’s say we have this function that returns either an error message or some HTTP response. Now, all well and good, but the reality is, most likely, our larger program is embedded in a more powerful monad than Either. It could be IO, or it could be some free structure, or it could be a monad stack with IO at the bottom. Most likely, we’re not operating at the level of the Either monad for big chunks of our program.
+
+So, down here in the little pieces, why do we return in Either when we don’t actually need to return in Either. We just need to return something that has the capability to represent success and failure, but may be able to represent lots of other cases as well as success and failure. We have more fine-grained notions of success and failure.
+
+And I think that one of the good things about functional programming that could, in theory, be enabled by a sufficiently adept programming language is enable us to defer the decision of what actual concrete type data structure to use in a huge number of cases. It’s not easy to do that, it’s actually extremely difficult to do that in today’s programming languages like Haskell and PureScript and so forth.
+
+But I think you could design a programming language in which it’s very easy and natural to say, “I need to be able to construct something like this. Or I need to be able to deconstruct it in these particular ways, and maybe some other set of ways that I don’t have to handle.” And if we did have such a programming language like that, then we would be able to be much more polymorphic in the types of data structures that we work with.
+
+And we would have to do less mind-numbing conversion from one thing to another, from an Either to, however we’re going to get it into the type that represents our monad stack. And I think that when expressed like that, it’s maybe not a controversial idea. But I think it suggests that people take a hard look at when they’re writing code, and they’re using a concrete data structure, do they actually need to require that?
+
+Or can they give up some of those requirements and return something that’s more polymorphic? And I think the answer is, in some cases, you can do that. And you can do that through type classes and other types of things in today’s programming language, but it’s not very easy.
+The Employee Manager Function That Knows Too Much
+
+Adam: So, let’s try to put an example on that. So, I’m thinking, actually, here’s an example from your article. So, you have a function that takes a list of employee and then another employee, and then it returns an Either, which is either an error message or that employee’s manager. So, what’s the problem here?
+
+John: So, most likely, this function will be embedded into a context that represents failures differently than an Either. So, for example, it could be the IO monad. Or it could be some monad error of some ErrorT of StateT of something of something of something, and so on and so forth.
+
+And if we want to be able to use this function and have those different types of errors lining up, then we’re going to have to take the output of this function, which is an Either, and we’re going to have to manually convert that data structure into a data structure that’s bigger, that can represent everything it can represent, but potentially lots of other things that it can’t. And there’s no problem with this. It’s just boilerplate.
+
+And not only is it boilerplate, but in some sense, it’s premature specialization. We decided that we were going to commit to the Either data type, when in fact, all we needed was any type that had a failure and a success constructor. But it could have had a thousand other constructors as well. Honestly, in this example, we didn’t care if it had more constructors, we just necessarily wanted a success and failure constructor type.
+
+And you see this mind-numbing, boring plumbing a lot when you’re using, well, just in any case, where you have smaller data structures, and you’re lifting them up, you’re constantly lifting them up to be in bigger data structures, whether that’s monads, or all sorts of other things. If you write programs using the free monad style, you’ll encounter this a lot with just coproducts and so forth, just lots of mindless boilerplate lifting that, in theory, doesn’t have to exist.
+
+It is maybe in today’s programming languages, it’s actually probably easier just to pay the cost of that boilerplate. Because getting away from it is even more painful in many cases. But in my opinion, that’s just an argument for a better programming language. It’s not an argument why we should always specialize our return types, even in cases where we don’t need to.
+
+Adam: So, in this specific case, I think existing programming languages can’t handle it, right? We’re saying, instead of returning an Either, we return some type class, Either-ish or something that that encapsulates this concept?
+
+John: Right. You can have some Either-ish type class that has a success and failure constructor, and then any type which is bigger than that can of course, provide an instance for that. So, it’s actually relatively easy, I think, to do that in today’s programming language. Now, is it warranted? I’m not sure. It depends on how much pain you’re in. But I’ve seen codebases where there’s a lot of lifting smaller data structures into bigger data structures.
+
+And it’s not necessary, if you make your code, sufficiently polymorphic. And also, as a side benefit, you actually increase performance by deferring the data structure until the point where it’s final and your application actually end up increasing performance.
+
+Adam: How does it increase performance?
+
+John: Because less manual conversions. So, for example, if Either is converted to an EitherT of something with an error inside there, and something else, and then later on, that’s converted to IO, I mean, there’s two conversions in that case. But in theory, there could be five or six conversions.
+
+I’ve seen codebases where there’s 12 conversions from the fine-grained individual function all the way up to the top level of the application. And all those conversions, they’re allocating memory on a heap, then they’re moving bits around and so forth. And they don’t necessarily need to happen.
+When Abstraction Makes Your Code Slower
+
+Adam: I could see a case where maybe the performance goes the other way. I’m thinking I have some function. And instead of a list, it takes list-like or something, right? It takes a type class that encapsulates these lists-like options. But then, maybe list isn’t a good example. What I’m thinking of is a function wherein it does something like add elements onto the end of it, but then the concrete instance that we pass in is actually very expensive data elements onto the end of it.
+
+John: Yeah. So, I’m actually a big fan. I think that Haskell and some other programming languages have made some mistakes here. Because they’ve not baked into the definition of the type class required performance characteristics. And in many cases, that proves to be fatal. You’re trying to do too much abstraction. You shouldn’t be abstracting random access over types that don’t efficiently permit of one random lookup. And in many cases, that’s being done.
+
+And so, you have type class functions or functions implemented in terms of type class functions, which have pathological performance with some data types, and wonderful data performance or wonderful performance with other data types. And in my opinion, that does not make sense. It’s one of the things that we need to clean up, we need to go in and say, “No, this type class, we’re going to provide performance guarantees on these different methods.” And I know testing that is something different.
+
+And obviously, there’s some tools out there that you can verify that some things like Big O of N, or big O of one, and so forth, they’re not very good. But we could push them further, we can make them as good as QuickCheck or Hedgehog or these other tools out there. We can make them really good if we put some effort into it. And then we would be able to say, “Okay, I’m going to use this function. And I’m going to have a guarantee from the laws of the type class, if you will, that it’s going to perform at such a level based on the size of my collection.”
+
+I think that’s something that we absolutely have to do because I’ve just seen too much time be wasted tracking down performance problems that exists solely because an instance of something was created that could satisfy the laws, but only at horrendous performance. And that type of thing is not principled programming, in my opinion.
+
+Adam: So, we would incorporate the performance characteristics in the type class law amount?
+
+John: Exactly. And right now, type class laws are by and large, just comments. It’s not like we can’t add more comments. And develop additional machinery to you pull that stuff out of there and verify it at runtime in your test suite. It’s possible. And we should be doing it.
+
+Adam: It seems a little bit like circling back around, like I have something that takes in an array, which is great, because I have random access. And then, I’m going to make actually a type class that’s array-like, I guess, to say this is a list type thing that I can randomly access. And circling back to being a data structure again, or?
+
+John: So, I don’t think so. Because for example, in the case of array, you can actually use an array, but you could use a skip list. Or you could use a vector or you could use lots of other things. And depending on how that thing is produced, it may exist in one concrete form or another. For example, it may exist as a skip list because it was cheaper to build that than it was to build an actual array.
+
+And so, by making your code polymorphic over all things which are array-like and permit O of one random access, you’re actually facilitating its reuse in situations that you did not intend. Whereas if you hard code that to be an array, then suddenly, someone has to actually build an array all at once through pre-allocation or whatever technique they’re going to use. And that may actually not be all that efficient.
+
+And the question is, well, why did you need to know it was an array? Why did you need more than random access? Arrays permit all kinds of things. If all you needed was random access, then ideally, your function should be able to work with anything that supplies random access. And then, that’s just going to open up so many possibilities for reuse you can’t even imagine them right now.
+
+As well as prevent you from doing silly things like mutating arrays and so forth, that you didn’t need to do in implementing that function, because you locked down that interface to the tightest possible bound that you needed in order to implement the function.
+
+Adam: It’s circling back to what you were saying earlier that the old, old concept of programming two interfaces.
+
+John: Yeah. Yeah, it is. It’s very similar to that.
+Laws That Nobody Enforces
+
+Adam: So, type class laws are not enforced in any way. Do you see like, should that be improved? Or your thoughts?
+
+John: Yeah, I wrote a blog post on this topic, I think, years ago, but it’s still online. And basically, I argue that type classes are not the best that we can do. In fact, we could probably do a whole lot better. And one of the things or one of the ways we can improve them, I think, is by allowing some first class means of specifying the laws inside type class. I mean, now they’re written as comments. And depending on what programming language you use, and what tools you use, those comments can sometimes be extracted and used in tests.
+
+But it’s not part of the language spec. It’s just more convention. I think that there are very real benefits that could be achieved by moving that into the language itself and saying, “Okay, here’s a first-class facility for defining laws for my type class.” And there are two common types of laws that are used right now, algebraic laws, but also operational laws. And both of them are useful. And then, if you want to consider it, there’s performance laws.
+
+Like what are the laws of this have to be, Big O of N, Big O of N squared, etcetera. And a language that provided first class support for that would make the concept of principled type class something formal and something now first class.
+
+Adam: So, how do you envision it checking things? Is this like property-based testing? Or how is it enforced?
+
+John: Yeah. So, it could be enforced. I don’t know if you could do it automatically in all cases, but it’s possible that you could do it in many cases. Because basically, if you bake this machinery into your compiler, then in theory, it can have a notion of a generator. And it can have generators for all the default types and generators for the polymorphic ones expressed in terms of the generators for the concrete types, and so forth.
+
+So, I think you could bake a lot of the quick textile machinery into the language and require things in much reduced set of circumstances. I’m not exactly sure what that would look like. But I feel like there’s a lot of stuff that you could get for free. And in fact, if you look at a lot of the arbitrary instances out there, they’re just sheer boilerplate. And that’s why you can automatically derive some of these things, because they’re just relatively straightforward.
+
+So, I think that if you were to bake laws into type classes, you would have a lot of this machinery as well baked into this notion of being able to create arbitrary instances of some type. And you would require less assistance from the developer. And then, you can run these things in the same way that we run quick check properties today. You can actually run it as part of calculation, if you wanted, perhaps. Or maybe a special mode like verify my laws actually hold.
+
+Adam: Yeah, I imagine some dark future where my Scala compile times, it’s like, okay, verifying this type class law for all, in 64s.
+
+John: Oh, no. Yeah.
+Scala’s Type Classes Beat Object-Oriented Traits
+
+Adam: How do you feel about the implementation of type classes in Scala? It’s a not a baked in concept, but approximated, and has some differences from maybe the Haskell type class model.
+
+John: I’m a huge fan of type classes in Scala. I think it totally changes the way you write software in Scala. And I think objectively superior to the object-oriented style of doing things. Because with the object-oriented style, you need control of the inheritance hierarchy of all the types. You want it to be able to support these operations. And with type classes, you don’t. So, you can define a type class called monoid for types you have no control over, because they’re not bundled into its inheritance hierarchy.
+
+And so, I think for that reason, type classes are objectively superior to use of traits and object-oriented style interfaces in order to model similar behavior. And that’s why I think you see even type classes in the standard library. Scala standard library can’t avoid them. Things like ordered and whatnot.
+
+I mean, numeric, they were invented because, yeah, they didn’t have control over all these different types and they wanted to be able to make some of the code much more generic than would be possible if you required everyone implement a certain trait in order to provide this functionality. So, I’m a big fan of that. I do think that the standard way of encoding type classes in Scala. It does have some drawbacks.
+
+Scalaz 8 is experimenting with a different alternative way of encoding the same thing that should move some of the drawbacks at the cost of maybe a little bit more boilerplate. So, we’ll have to see. I think that the current default way of encoding type classes is good enough to be considered an asset, and will hopefully improve with time and will eliminate some of the ambiguous implicit error messages that come when type classes have complex dependencies on other type classes.
+
+Adam: So, would you use a type class even if you controlled the underlying object rather than a trait?
+
+John: Yes, I would absolutely do that. And there are very few circumstances in which I would not. In fact, I can’t even think of any that I would not. Well, I can think of one. But aside from that one, I cannot actually see any reason at all to use a standard object-oriented style trait instead of a type class. Just because it leads to, first off, cleaner inheritance hierarchies. Second off, it will basically, limit the potential for subtyping to screw with type inference.
+
+Because if you have a sub-trait that has a bunch of methods, and your data types are going to extend that, then that’s going to affect type inference in very subtle ways. And most of these ways, you don’t actually want. You want to get rid of that. You want to make things as non-object-oriented as possible in order to help with the type inference. And if you represent that functionality as a separate type class, then it opens up the possibility of doing that.
+
+And yeah, it may be a tad more boilerplate, but it’s the right once boilerplate. You do it one time, and then it’s done. And you don’t have to think about it after that. So, the cost is constant for a given number of data types. So, it’s, in my opinion, acceptable cost for a long-term long list project.
+Mixing Imperative and Functional Breaks You
+
+Adam: So, you mentioned the IO monad, and Haskell. So, do you think that people should be writing Scala or other languages that don’t enforce purity in this Haskell style of using the IO monad to markup things that may have side effects?
+
+John: So, I absolutely think that they should be. Now, the reason I say that is as follows. First off, if you mix imperative style with functional style, then your brain has to switch modes. Because in one mode, you can reason about the meaning of your program using equational reasoning, A equals B. So anytime I see an A, I know what it means by substituting in the B. And that is pervasively true in a functional codebase.
+
+But if you mix imperative style with functional style, then suddenly, that becomes true in some places, and not true in other times. And so, you have to have an extremely high level of diligence and awareness about which section of the code you’re in. Because you have to change how you think about its correctness. Because the imperative style is A then B, then C, then D, and so forth, making all these mutable changes.
+
+And so, you track it like simulating a machine in your mind. And then the functional style is much more mathematical, and you understand its meaning through substitution. And those totally different style, your brain has to switch modes. And so, I find it very difficult to do that, and easy to get wrong. Because things that hold in one case will not hold in the other. And so, the substitutions and transformations you can make when you’re mindlessly refactoring, you have to be super careful when you switch modes, because the invariants don’t apply.
+
+And so, just having one uniform reasoning principle that can apply to your entire codebase, you never have to switch modes, you can just stay in the functional mindset all the time is tremendously beneficial. But then, you get other benefits as well. You get the benefits of knowing what a function does by looking at its type signature. And it’s hard to overstate how just life transforming that is. Because once you get used to it, then you stop drilling into functions.
+
+And that totally changes your life. Without that capability, without the ability to know what a function does by looking at its type signature, then you have to drill into all the functions it calls. And then, after you do that, you have to drill into all functions they call and so forth until you get to the very edges of the graph. And that takes a lot of time. And that’s why it’s very hard to go in and modify someone else’s code.
+
+Because in order to understand what it does, you need to trace all these branches until you get to the very end. But in a functional program, you can look at its type, and you can have a very good understanding of what it can do. For example, if a pure function returns a bool, then you know for a fact it’s not going to be doing any console input output, any socket input output. You can memorize the result that function. That tells you so much.
+
+Whereas, if an imperative program a function returns a bool, who knows. Your Java’s address constructor actually does network calls to resolve the domain in a canonical fashion. It’s preposterous. That can happen anywhere. It could happen in two string or in hash code, or all these sorts of weird random effects that take you tons of time to track down and debug. You didn’t expect them because you were lazy and actually didn’t go and inspect every function that was called by the function that you called.
+
+And it’s a common source of bugs. And it’s a source of complexity. And when you have a purely functional program in front of you, you don’t have to do that anymore. So, you have a uniform reasoning principle that you’re going to apply to the whole codebase. You don’t have to dig into things because the types tell you what these functions do. And then, you end up, I think as a result of these properties, developing code that’s much more modular, much easier to understand.
+
+And of course, much easier to test because everything is purely functional. All your functions are total, they are deterministic, they don’t have side effects, and so forth. And it’s just much easier to test and reason about that type of code. And then, I would also say, you get all these benefits, but you get other benefits in terms of expressiveness. And the reason why you get additional expressiveness is because functional programming reifies all the things.
+
+It makes them real first-class values. So, like effects, like printing a line to the console, that becomes a value. And so, you can take that value, and you can put it in data structures like other values. It basically takes programs and it turns them into this, so you can reuse all the machinery and love from value manipulation in order to build your functional program. And that is a tremendous increase in expressiveness.
+
+And if you look at code using Future versus code using a purely functional IO monad like Scalaz 8, you’ll see a tremendous difference in just in terms of how many lines of code are required to express the same idea. It goes way down in purely functional code. Because all the things are first class, there are no effects, they’re just values. So, you can manipulate values and chain them together and use combinators.
+
+And do all these wonderful, amazing, magical things that you simply can’t do when all your things are actually effectful in their mutating state and interacting with the real world.
+IO of Int Could Do Anything — and That Is the Point
+
+Adam: So, it seems to me, what you’re saying, in a way is that the benefits of using IO everywhere where you’re doing side effects is that the things that aren’t in IO, you know are pure. However, if you have a function that returns IO Int, it’s hard to reason about that, right? All you know is when this is executed, it will return to me in integer.
+
+John: That’s right. So, it could do any possible thing at all, which is a reason to make the code polymorphic. And to use type classes that say, I need monad socket IO here. So, I know it’s going to be doing some socket operation. Or I need monad random. I can work with NEM that supports monad random. And then, if it returns M of Int, I know that it potentially uses the random effect, but doesn’t use anything else. So, I think yes, you still run into that problem.
+
+But the mere fact that it returns IO Int is still tremendously useful. Because that should raise a big alarm in your head, say, “Okay, this function could do anything at all.” And every time I call it with different parameters, and I return me a different IO Int. So, I can’t rely on it to be deterministic in that same way. So, that still communicates a lot of value.
+
+And how we take it to the next step is we use type classes to throw away all the effects that we didn’t need to constrain, lock that function down and communicate more accurate information to the developer who ideally doesn’t have to dig into the implementation to find out that it called Math.random a single time.
+
+Adam: So, have you used this approach where you split IO up into a whole bunch of different capabilities or effects or something?
+
+John: Yeah, that’s right. So, we use that to some degree and actually quite extensively in SlamData as codebase. And then, it’s the style that I prefer to use when I’m doing my own personal projects as well.
+
+Adam: Interesting. There’s a whole bunch of potential IO monads in Scala, I guess. There’s Scalaz, there’s a Future, there’s a Monix Task. Is this good or bad or?
+
+John: Well, it’s like JavaScript having 1000 different frameworks. The bad part is it’s painful. And it creates lots of confusion, and lots of incompatible codebases, incompatible libraries, and so forth. But the good thing is, it’s parallel exploration of the landscape of possibilities. And I think, as painful as it might be, standardizing prematurely on one type too soon means you didn’t explore the space of all possible solutions.
+
+And I think that that in the end, it hurts ecosystem, it’s like standard libraries with programming languages. Once you ship something in the standard library, no matter how crappy it is, it’s going to be there forever, and all the libraries are going to use it. Which is a reason to not have a standard library, or a reason to very carefully add things into there. Because it’s very, very hard to change it, it’s very hard to improve it over time in response to new learnings.
+
+And I think the situation we have in Scala is we have lots of old monads or monad-like things. Future’s not, strictly speaking, a monad, but it’s monad-like. It has the method names anyway. And then, those made so many mistakes, just so many terrible, terrible mistakes that have screwed people up and introduced blogs and made systems slow, and so forth. But we’ve learned from mistakes. And we’ve created other data types that don’t have the same set of drawbacks.
+
+And then, we learn from those. We’re actually probably three generations in. Yeah, we’re probably a good three generations in, the Future era. And then, the Task era, the Scala’s Task era, basically. And then, this post-Task era in which we have things like Monix Task and Scalaz 8 IO. And we’ve learned a lot in each of those generations. And even though the existence of all these data types is confusing, and leaves incompatible libraries, and so forth, ultimately, the community is going to benefit.
+
+Because like the very latest cutting-edge generation, it’s not only way faster than anything that’s ever come before. But it also supports incredibly rich functionality that you just can’t get access in the older data types. And no doubt, we’re not at the end of innovation yet. There’s probably going to be a fourth generation. There’s a limit to how far you can push these things in the JVM. But there’s probably going to be additional evolution, at least incremental on top of the third-generation effect monads that we have.
+
+And ultimately, it will result in more people coming to functional programming for the benefits that these effects monads have, which I think is a good thing for the community in the long run, as painful as it might be in the short term.
+Three Generations of Effect Monads in Scala
+
+Adam: So, do you think that it would be good at some point to not have Scalaz and Cats or is it good to have these two competing functional standard lobes or something?
+
+John: Yeah. That’s an interesting question. And I think that prior to Scalaz 8, there was really no reason for both of them to exist. Because Cats are replicated and use some of the code from Scalaz 7. It used the same type class encoding. It used a lot of the same structures. It was a subset of Scalaz 7 but still architecturally very, very similar. And there was no compelling reason to use one versus the other.
+
+But I think with the difference between Cats and Scalaz 8 is going to be significant enough that it’s possible they end up living alongside each other for a good long while. Cats is aiming to be much smaller, much more minimalist, and much more of the same in terms of the Scalaz 7 style hierarchies, and type class, and coding and so forth. And it’s also aiming for long-term compatibility. So, Cats is at 1.0, which means that by and large, it’s not going to change.
+
+Which is going to make it attractive for certain class of companies who need a few minimal abstractions, they need a monad and so on and so forth. And they want to be able to stick with that for two or three or five years, maybe never change, maybe you never have to upgrade. And Scalaz 8 is quite different. Just it’s a rethinking of everything that you can possibly imagine about functional programming.
+
+In Scala, for example, monad transformers, in my opinion, do not scale on the JVM. No way that you can make efficient monad transformer. It’s a mistake, a huge mistake. And all these tutorials telling people to use monad transformers in Scala, they’re setting companies up for failure. Because if they have a deeply nested stack five monad transformers, I promise you that machine will be overloaded doing the simplest of things due to massive heap churn and massive megamorphism, and all these things.
+
+We’re setting people up for failure. And as a result, I think what we have to do, as we strive to innovate in libraries, or library versions, as the case may be, that are free to break backwards compatibility, we have to figure out what it means to do functional programming in Scala. Because it doesn’t look like functional programming in Haskell. And just copy more of the same stuff. It’s just going to result in more people rejecting functional programming, because they try it, and then they find out this stuff doesn’t actually work.
+
+It doesn’t actually solve the problems in a way that the business needs them to be solved. They can’t satisfy performance requirements or memory requirements or this or that. And we need to get away from that mindset that functional programming in Scala should be exactly the same as Haskell. And there should be no deviation. Because that’s just not true. In an ideal world, that would be true. In reality, it’s not.
+
+We need to figure out what FP looks like in Scala in a way that solves the problems that enterprises actually have. And also, gives the functional programmers the things that they need in order to reason about the software. And to date, no library, whether it’s Cats or Scalaz 7 or whatever it might be, has done that pervasively, especially in the area of effect composition. So, we need more innovation, in my opinion.
+
+And Cats is going to probably stick on its current path, which is going to make it useful for shops that are doing light FP and don’t need a whole lot. And then, I believe that I see Scalaz 8 as being the choice for the shops doing pure FP, who also don’t want to compromise on performance or any of the other things that are important to business.
+
+Adam: Yeah, I feel like for any given problem, there’s a certain correct, having one implementation is probably not enough. And having four is probably too many. I’m thinking in terms of an open-source project, right? If you have four, you’re distributing the people who are working on things too thinly. And if there’s only one, experimentation is lost. But Haskell, all the type class and PDF stuff is baked right into the standard library. And they seem to do just fine. So, I don’t know what that says.
+
+John: Yeah, well, every once in a while, they go through these flame wars, like the mono [inaudible 00:54:07] proposal and should two bool be a Functor. And they go through all these different things. And they do have to occasionally break backwards compatibility. And of course, their motto is, avoid success at all costs. So, maybe that makes sense. But yeah, there’s still a lot of legacy cruft in Haskell for that reason. Because there was a standard library.
+
+More or less official standard library. And as a result, in Scala, we have better type class hierarchies than Haskell, more clean. And with the Slacaz 8 IO monad, as a vastly cleaner semantic for error handling and interruption than the Haskell model. So, even though people like to trash talk Scala, including myself, from time to time, we actually do have the capability to innovate faster. And partially, it’s because there is no default thing. It’s wide open.
+
+And there’s nothing that’s standard. So, people are free to innovate it at their own pace. And that results in many more improvements over smaller timescales than we see in Haskell.
+
+Adam: I have a small question about pronunciation. It’s funny, so I’m Canadian. And so, I would say the last letter of the alphabet, Zed, but I figured Scalaz, because it was predominantly American, but I hear you saying Zed as well.
+
+John: Yeah. I’ve gone back and forth on that. I originally said Scala Zed, Scala Z. But then, I was hanging around with too many people at conferences who were saying Scala Zed. So, I ended up adapting Scala Zed. I don’t think it matters a whole lot.
+Why Monad Transformers Will Crush Your JVM
+
+Adam: You mentioned that monad transformers don’t scale. How so?
+
+John: Well, so you have the following problems. First off, monad transformer is basically a stack of data structures. It’s a data structure inside a data structure, inside a data structure, inside a data structure, inside your outer effect monad IO, or task or whatever it might be. And every time you do any operation, for example, the sequencing operation via flatMap, you have to construct this entire chain stack of nested data structures.
+
+And so, you put tremendous pressure on the heap, not just from the data structures and all the nesting, but also, from all the things that are allocated on the heap that you didn’t even know. For example, when most people write a function in Scala, they don’t know that actually transforms into object allocation and so forth. And then, so not only do you have all this heap pressure from all these closures, and all these data structures that are nesting inside one another, but you have a problem that’s probably just as bad in many ways.
+
+And that’s megamorphism. Megamorphism is where the JVM goes to call a method. And it doesn’t know what concrete data type is associated with that method, it’s going through the interface. So, because it doesn’t know, it ends up running a lot more slowly, because it has to do a virtual dispatch. And the problem with monad transformers is that every layer of your monad stack adds an additional level of indirection.
+
+So, not only did you have one layer of megamorphism up there at the top, which is inevitable, or it’s not inevitable. If you’re using a concrete type, then you don’t even have to pay that. For example, if you call IO.flatMap, then the JVM is going to know which flatMap you’re talking about. It’s the one on IO, because you have that concrete data type.
+
+But on the other hand, if it doesn’t have that piece of information, then you’re going to end up, in your implementation, when you call flatMap at your monad, that’s going to end up delegating to other flatMaps, which will delegate to other flatMaps and so forth. And monad transformers are polymorphic in the type of monad that they route. So, what that means is you have megamorphic calls to other megamorphic calls, other megamorphic calls and so forth for as deep as your monad transformer stack is.
+
+And so, if you think using an IO monad or Task monad or Future can be slow, try using a stack of five monad transformers on top of IO. And then, we’ll talk about slow. And not just slow, by the way, but massive heap churn. So, just massive pressure on the garbage collector, just increased latencies. You’re going to see spikes. Performance is just terrible. And you can actually get away with this, surprisingly, for some applications.
+
+If you have some business process that only has to do 10 requests per second or something like that, you’re going to be fine. You can use these deeply nested monad transformer stacks, which has convinced some people who just do this type of applications that this is a good idea. But it’s not a good idea.
+
+Because anytime you try to do a typical business application where you need to handle hundreds or thousands of requests per second, then you’re not going to be able to achieve those performance numbers using your deeply nested stack of monad transformers exist. Everything is going to be terrible, latency, your response rates. Everything is going to be terrible about that, memory utilization. And this gives functional programming a bad reputation, deservedly.
+
+Because we’ve blindly copied things from Haskell and expected it to work on the JVM. And that’s never going to happen. You have to change what it means to do functional programming. You can still do purely functional programming in Scala, and you can make it performant. But you cannot do it the same way that you do it in Haskell. And if you try, you’re just setting companies up for failure.
+Flatten the Stack or Pay the Price
+
+Adam: So, I should just be like, double flatMapping everywhere, or however deep my stack is, what’s the solution?
+
+John: Well, the solution is no stack, no stack at all. Ideally, your program is using type classes to represent the effects that it requires. And for example, instead of using ErrorT, you should use monad error. Instead of using StateT, you should use monad state, and so forth. And all these type classes, they don’t say anything about what the data type is that has an instance.
+
+So, what you’re free to do is when it comes time to supply a concrete data type at the top of your program, you’re free to supply any monad that has the required instances. So, what you can do is you can create a cost-free new type, extending any vowel for like MyIO or whatever it ends up being that supplies instances for all these different things, monad error, monad state and so forth.
+
+And all it’s going to do is express all these operations in terms of the IO monad. So, you end up going from a potentially a monad transformer stack with 10 levels to something that is merely one layer of indirection away from MyIO, which is secretly underneath the covers. And to the JVM, it’s in fact, the IO monad, which means it goes from 10 levels of megamorphism and nested data structures to one monomorphic level where there’s no additional nesting.
+
+So, you get the performance of raw IO. But yet, you were able to use monad error and monad state and all the other things required by your application. And this just dramatically transforms your performance. It makes functional programming actually practical on the JVM. And it handles, I’d say 80% of the problems that monad transformers are used for.
+
+And to handle the remaining 20%, you need localized effects, you need the ability to eliminate effects locally inside your application. And you actually can’t use this technique for that, at least not directly. But there are ways that you can work around that issue as well.
+
+Adam: That makes a lot of sense assuming I have a single stack. Which often you do, I guess. But if I have different combinations of transformers all over the place, I need a concrete instance of each one, right?
+
+John: Yeah. If you want to do a strict translation of monad transformer program into one without it, then yeah, what you need to do is for every concrete fully realized stack that you had, you need to create a new type for that, which is a wraparound IO with its own custom instances for all the different type classes that were previously supported by that monad transformer stack. So, many applications just use one.
+
+Generally, when you see different monad transformer stacks being used, it’s because they need localized effects. They need to add a StateT to something and then run it and get rid of the StateT, and then expose the underlying monad. And like I said before, you use a slightly different technique to handle those cases. But it is possible. And I’ve never seen any application that actually needed a monad transformer stack.
+
+In some cases, you’ll need the ability to do localized effects so you can escape from them. But I don’t think there are any applications that actually do need a monad transformer stack.
+
+Adam: And I’m worried about my performance. I’m going to have to do some checks.
+
+John: Well, like I said, for some business process type applications, 10 requests per second, the memory parts don’t even matter. And performance is not an issue. And it’s good enough. But for a lot of applications out there, it’s just monad transformers just totally destroys any hope at achieving performance that is even within two or some magnitude of the imperative equivalent, that we’re talking just dramatic reduction in performance.
+The Secret to Clickbait That Actually Teaches
+
+Adam: One thing I wanted to just ask you about is your writing style. I think that you’re very good communicator. So, you have good headings that maybe are a little bit controversial. And then, you dive into details with code. What’s your secret of communicating about technology effectively?
+
+John: The most important thing when you’re trying to teach someone something is the ability to see the world from their perspective. So, you have to know your audience, but then you have to be able to understand what they know. And the other thing that I think… I mean, obviously, you can structure things. You can work on the structure of things. So, make sure there’s a logical progression, make sure that there’s flow.
+
+I think flow actually is one of the most underrated aspects of a good presentation or a good blog post. There should be some arc, and you should be moving people along that arc. But then beyond that, I think you can do a little to make things interesting and relevant. Because when you write something, you’re asking for people’s time. And you don’t want to waste their time. You want to give them a reason to stick around.
+
+So, you want to make things as interesting as possible. And sometimes, that’s a clickbait article, clickbait article title just to make people think a little bit like state something in a different way to make them think, “That sounded like it was wrong. But after I think about it, that actually is true.” Give them little puzzles that can have a reward. Because their reward for spending their time reading your stuff is hopefully going to be some realization that gives them a bigger picture.
+
+Or that teaches them some concept they didn’t understand. Or that cultivates a skill in them like reading a polymorphic type signature, whatever it is. And that’s the payoff. When they have that aha moment, that’s the payoff for them. And that’s the thing that keeps them coming back for more, hopefully.
+

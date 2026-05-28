@@ -14,7 +14,8 @@ Wayland compositor built with Scala Native, Kyo, and wlroots.
 ## Pages
 
 ### ADRs
-*No ADRs yet.*
+- [adr/0001-adopt-functional-domain-design.md](adr/0001-adopt-functional-domain-design.md) — Adopt Functional Domain Design as the default pattern (with allocation deviation)
+- [adr/0002-adopt-deps-single-file.md](adr/0002-adopt-deps-single-file.md) — Adopt single-file Dependencies.mill (forward-looking)
 
 ### Designs
 - [designs/input-pipeline.md](designs/input-pipeline.md) — Input event processing pipeline
@@ -29,5 +30,6 @@ Wayland compositor built with Scala Native, Kyo, and wlroots.
 *No syntheses yet.*
 
 ### Other
-- [architecture.md](architecture.md)
 - [log.md](log.md)
+
+*Note: `architecture.md` is a schema-standard page but does not yet exist for this project — to be created when the codebase is stood up.*
