@@ -138,3 +138,5 @@ Query an external library's wiki.
 | Kyo | /p/gh/kyo | kyo/llm-wiki/ | concepts, effects, data, modules, patterns, conventions, recipes |
 | Mill | /p/gh/mill | mill/llm-wiki/ | concepts, modules, configuration, patterns, recipes, cli |
 | Airstream | /p/gh/Airstream | Airstream/llm-wiki/ | concepts, signals, streams, state, ownership, transactions, operators, patterns, conventions |
+| toml-scala | /p/gh/toml-scala | toml-scala/llm-wiki/ | concepts, api, data, codecs, derivation, recipes |
+| microvm.nix | /p/gh/microvm.nix | microvm.nix/llm-wiki/ | concepts, hypervisors, options, host, recipes, conventions |

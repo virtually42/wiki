@@ -8,12 +8,13 @@ to find relevant pages. Use frontmatter glob to narrow scope.
 ### Knowledge Operations
 - **ingest** — Import a source (document or code) into the wiki
 - **ingest-external** — Create an llm-wiki for an external library in this wiki
-- **query** — Answer a question using wiki knowledge
+- **breakout** — Extract a micro-library from a monolithic source repo into its own `/p/hg/<name>` location and register it as a wiki project. Human provides the source path. See `tech/guides/breakout.md`.
+- **query** — Answer a question using wiki knowledge, if answer not found, research using other sources, update wiki with new key insights according to @media/schema.md
 - **lint** — Check wiki consistency, compliance, and drift
 - **synthesize** — Generate cross-cutting analysis across projects or tech
 
 ### Code Operations
-- **implement** — Execute a task using wiki context, update wiki with findings
+- **implement** — Execute a task using wiki context, update wiki with new key insights
 - **test** — Run tests, capture results, update wiki with observations
 - **run** — Execute the system, observe behavior, update wiki
 

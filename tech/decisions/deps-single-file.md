@@ -5,13 +5,20 @@ kind: normative
 status: accepted
 scope: global
 created: 2026-05-24
-updated: 2026-05-24
+updated: 2026-05-29
 applies_to:
   languages: [scala, scala-native, scala-js]
   domains: [any]
   excludes: []
 used_by:
   - projects/compositor/adr/0002-adopt-deps-single-file.md
+  - projects/sourceline-manager/adr/0002-deviate-deps-single-file.md
+  - projects/sourceline-manager/adr/0006-adopt-deps-single-file.md
+  - projects/toolbox/adr/0002-deviate-deps-single-file.md
+  - projects/toolbox/adr/0003-adopt-deps-single-file.md
+  - projects/safetensors-scala/adr/0001-adopt-deps-single-file.md
+  - projects/dependency-manager/adr/0001-deviate-deps-single-file.md
+  - projects/tagless/adr/0002-deviate-deps-single-file.md
 sources:
   - tech/guides/mill-dependency-management.md
 supersedes: []
@@ -59,6 +66,29 @@ object Platform:
 - Single-artifact libraries inline the version in the `mvn"..."` string
 - Platform versions live in the same file as `object Platform`
 - No nested version objects, no `lazy val`, no separate Versions file
+
+### Mill 1.x discovery pre-requisite
+
+When `Dependencies.mill` lives in a subfolder (the canonical
+layout: `deps/Dependencies.mill`), **Mill 1.x requires a sibling
+`package.mill` anchor** to discover it. The anchor is one line:
+
+```scala
+// deps/package.mill
+package build.deps
+```
+
+Without it, Mill silently ignores `deps/Dependencies.mill` and
+`build.mill` references like `build.deps.Deps.<name>` fail to
+resolve. This is a per-consumer one-time setup file; not
+documented in the Mill upstream llm-wiki under
+`patterns/build-file-structure.md`, but the in-the-wild precedent
+is `mill/example/large/multifile/13-subdir-with-helper/`.
+
+Projects that use `dm` (see
+[[projects/dependency-manager/index]]) inherit the same anchor
+requirement — `dm regen` produces the `Dependencies.mill`, but
+the anchor is hand-authored once per repo.
 
 ## Consequences
 

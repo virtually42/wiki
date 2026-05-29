@@ -277,11 +277,37 @@ Key Mill commands for the wiki's implement/test/run operations:
 - Build plugins are declared in `//| mvnDeps: [...]` at the top of build.mill
 - `mill-contrib-buildinfo` is commonly used for compile-time constants
 
+## SNAPSHOT Workflow
+
+For cross-repo development where one Mill project consumes another via
+`publishLocal`, use `-SNAPSHOT` versions to avoid version-bump ceremony on
+every iteration. This is Coursier-level behaviour, not Maven-specific:
+
+- `publishLocal` of a `-SNAPSHOT` version silently overwrites the
+  existing artifact in `~/.ivy2/local`. Release versions throw on
+  republish.
+- Consumers re-resolve `-SNAPSHOT` artifacts on every build; release
+  versions are cached indefinitely.
+
+Typical loop for iterating on a library used by a downstream project:
+
+```bash
+# in the library repo
+mill mylib.jvm[3.8.3].publishLocal    # writes mylib_3-0.2.0-SNAPSHOT
+
+# in the consumer repo — declares mvn"…::mylib::0.2.0-SNAPSHOT"
+mill consumer.compile                  # picks up the fresh bits
+```
+
+Promote to a release version (drop `-SNAPSHOT`) once the API and build
+are stable. Future patches resume the cycle at `0.2.1-SNAPSHOT`.
+
 ## Known Issues
 
 - Scala Native modules must filter `-release` compiler flags (JVM-only option)
 - Cross-build with `Cross[Module](versions)` requires careful `moduleDeps` wiring — reference the cross instance, not the container (e.g., `paladium.jvm(scalaVersions)`)
 - `generatedSources` tasks that depend on other modules' outputs (e.g., ScalaJS → embed in Native) create cross-module build dependencies that Mill resolves correctly but add complexity
+- **Empty-jar silent failure**: if a module discovers zero sources (often from a mis-computed `Task.Sources(moduleDir / ...)` path), `compile` succeeds with an empty jar and `test` "passes" because zero tests are detected. No warning. Verify after first `publishLocal` with `mill show <module>.sources` and `jar tf <published>.jar`. See [[tech/guides/mill-cross-platform]] § Pitfalls.
 
 ## Links
 

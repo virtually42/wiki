@@ -5,7 +5,7 @@ kind: normative
 status: accepted
 scope: global
 created: 2026-05-28
-updated: 2026-05-28
+updated: 2026-05-29
 confidence: high
 applies_to:
   languages: [scala, scala-native, scala-js]
@@ -13,6 +13,10 @@ applies_to:
   excludes: [shell-scripts, nix-modules]
 used_by:
   - projects/compositor/adr/0001-adopt-functional-domain-design.md
+  - projects/sourceline-manager/adr/0001-adopt-functional-domain-design.md
+  - projects/toolbox/adr/0001-adopt-functional-domain-design.md
+  - projects/dependency-manager/adr/0002-adopt-functional-domain-design.md
+  - projects/tagless/adr/0001-adopt-functional-domain-design.md
 promoted_from: []
 sources:
   - sources/summaries/introduction_to_functional_design_john_de_goes.md
@@ -233,14 +237,38 @@ form.
 - **Tagless HTML DSL** (our frontend) — declarative algebra over
   HTML structure; see `frontend:tagless-html-dsl`.
 
+## Adopters
+
+Two project ADRs currently cite this page, with distinct shapes:
+
+| Project | ADR | Stance | Notes |
+|---------|-----|--------|-------|
+| compositor | [[projects/compositor/adr/0001-adopt-functional-domain-design]] | Adopts with one deviation | Deviation on allocation semantics — interpreters must allocate only from arena / per-frame scratch, never from the GC heap. Default encoding **declarative** for pipeline domains, **executable** only where wrapping opaque wlroots/libinput callbacks leaves no clean declarative shape. |
+| sourceline-manager | [[projects/sourceline-manager/adr/0001-adopt-functional-domain-design]] | Adopts unconditionally | Declarative encoding throughout. Reference implementation — `Token` / `SourceLine` / `SourceFile` ADT with monoid laws tested as part of the public contract; in-tree ADRs at `/p/hg/sourceline-manager/docs/adr/0001..0002` cited as direct evidence. |
+
+The orthogonal-shape distribution (deviation-bearing real-time
+system + clean foundation library) is intended as the baseline for
+detecting future drift: a new adopter that fits neither shape
+without explanation is a signal worth a synthesis.
+
 ## Open Questions / Drift Signals
 
-- We have no project ADR yet citing this page. Until a project adopts,
-  excepts, or ignores it, lint will surface it under
-  *unused normative pages* in `meta/drift.md`.
-- Status is `accepted` (promoted by human 2026-05-28). In-scope projects
-  must now adopt, except, deviate from, or ignore this pattern in an
-  ADR per `POLICY.md`.
+- **Functional-domain-layering as a separate page.** Ghosh's source
+  ([[sources/summaries/functional_domain_modeling_zio2_debasish_ghosh]])
+  covers an axis this page does not — architectural layering of a
+  functional domain into entities / value objects / repositories /
+  domain services. Cited under Related Patterns; a separate
+  `tech/patterns/functional-domain-layering.md` is a standing
+  candidate, awaiting either a second corroborating source or a
+  project synthesis (per `POLICY.md`).
+- **Property-based / law-based testing as a peer to example-based
+  TDD.** `sourceline-manager` already practises monoid-law testing as
+  part of its public contract. A project synthesis from that practice
+  would satisfy POLICY's "second source or project synthesis"
+  condition for adding PBT as a first-class peer to TDD's
+  example-based discipline — relevant to the
+  `tech/patterns/tdd-rhythm` candidate flagged in
+  [[meta/drift]] §DRIFT-015h.
 
 ## Links
 

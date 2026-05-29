@@ -5,7 +5,7 @@ kind: descriptive
 status: draft
 scope: global
 created: 2026-05-24
-updated: 2026-05-24
+updated: 2026-05-28
 applies_to:
   languages: [scala, scala-native, scala-js]
 ---
@@ -223,6 +223,61 @@ object compositor extends ScalaNativeModule:
 - No `java.io.File` in shared code (use os-lib or platform-specific sources)
 - Threading models differ: JVM has real threads, Native has optional, JS is single-threaded
 - String interpolation with `\n` works everywhere but file paths must use os-lib's `os.sep`
+
+## Pitfalls
+
+### The `moduleDir` path-math footgun (Pattern B + manual sharedSources hybrid)
+
+Pattern B's pure form uses `PlatformScalaModule` for auto-discovery of
+`src/`, `src-jvm/`, `src-js/`, `src-native/`. Some projects layer a manual
+`Task.Sources(...)` override on top of `Cross[]` to share a single `src/`
+directory across the platform variants. The intuition trap is the path
+math:
+
+```scala
+trait Shared extends CrossScalaModule, PlatformScalaModule:
+  // INCORRECT: moduleDir for slm.jvm[3.8.3] is slm/jvm/, NOT slm/jvm/3.8.3/
+  def sharedSrc = Task.Sources(moduleDir / os.up / os.up / "src")
+  override def sources = Task { super.sources() ++ sharedSrc() }
+```
+
+`moduleDir` for a `Cross[]` variant is `<module>/<platform>/` — the
+Scala-version cross-axis exists in the task graph, not the directory tree.
+So `os.up / os.up` escapes too far and lands on the repo root, picking up
+nothing.
+
+The correct path:
+
+```scala
+def sharedSrc = Task.Sources(moduleDir / os.up / "src")
+```
+
+For the corresponding nested test object:
+
+```scala
+// moduleDir for slm.jvm[3.8.3].test is slm/jvm/test/
+def sharedTestSrc = Task.Sources(moduleDir / os.up / os.up / "test" / "src")
+```
+
+### Silent source discovery failures
+
+Mill does **not** warn when a module discovers zero sources. `compile`
+succeeds, the publish jar is empty, and `test` "passes" because zero
+tests are discovered (zero failures). The footgun above bit
+`sourceline-manager` 0.1.0: all three platforms shipped empty jars
+while tests reported success.
+
+Verify with:
+
+```bash
+mill show <module>.sources           # expect shared dirs listed
+jar tf ~/.ivy2/local/.../<artifact>.jar | grep -v META-INF
+                                      # expect compiled classes
+```
+
+Run this once after the first `publishLocal` of any new module — `mill
+show .sources` is the authoritative answer to "what files am I actually
+compiling?".
 
 ## Upstream Reference
 
