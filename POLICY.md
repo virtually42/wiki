@@ -17,9 +17,10 @@ Every page under `tech/` and every project ADR declares a `kind` in frontmatter.
 | `normative`   | `tech/architecture/`, `tech/patterns/`, `tech/decisions/`, project `adr/` | A rule, decision, or pattern that projects must address.   |
 | `descriptive` | `tech/stack/`, `tech/capabilities/`, `tech/guides/`, `tech/glossary.md`, summaries, syntheses, design docs | An observation, fact, or analysis. No compliance obligation. |
 | `project`     | `projects/*/plans/`, `projects/*/tickets/`, `projects/*/log.md` | Project-scoped work artifacts. No compliance obligation. |
+| `session`     | `projects/*/wip.md`, top-level `wip.md`             | Session-bound handoff state. Overwritten each session. No compliance obligation. |
 | `stub`        | anywhere                                            | Placeholder. Lint surfaces these until filled in.          |
 
-Normative pages are the only ones drift checks operate on. Descriptive pages get freshness and contradiction checks but no compliance enforcement.
+Normative pages are the only ones drift checks operate on. Descriptive pages get freshness and contradiction checks but no compliance enforcement. Session pages get freshness checks only — stale `wip.md` files surface in drift.
 
 ---
 

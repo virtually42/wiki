@@ -24,6 +24,7 @@ and naming/linking conventions.
 | plan | project | projects/\*/plans/ | Work decomposition and sequencing |
 | ticket | project | projects/\*/tickets/ | Atomic work unit |
 | log-entry | project | projects/\*/log.md | Append-only session record (not a standalone file) |
+| wip | session | projects/\*/wip.md or top-level wip.md | Rolling work-in-progress handoff for clean-session resumption |
 | code-source | source | sources/raw/code/ | Pointer to a code repository |
 | external-lib | source | sources/raw/code/ | Pointer to an external library with llm-wiki in this repo |
 
@@ -342,6 +343,48 @@ Refs: [[sources/summaries/wayland-ext-notes]], [[projects/compositor/architectur
 Log verbs: `ingest`, `adr`, `ticket-open`, `ticket-close`, `synthesis`,
 `gap`, `drift`, `lint`, `session`, `promote`, `implement`, `test`, `run`.
 
+### wip
+
+Session handoff state. Single rolling file — overwritten each `wip` invocation.
+History belongs in `log.md`, not here. One per project at `projects/<name>/wip.md`,
+plus a top-level `wip.md` for cross-cutting work.
+
+```yaml
+---
+id: wip-<project-or-cross-cutting>
+title: WIP — <short goal>
+kind: session
+status: active | paused | abandoned
+project: <name> | null
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+branch: <git-branch>
+related: []                        # tickets, plans, design docs
+---
+
+## Goal
+What we are trying to accomplish.
+
+## Status
+Where we are right now. One paragraph.
+
+## Files Touched
+Files modified this session and why. Include uncommitted vs. committed.
+
+## Decisions
+Choices made this session, with reasoning.
+
+## Blockers
+Open questions, failing tests, missing inputs. Empty if none.
+
+## Next Step
+The single concrete next action. Phrased so a clean session can act on it
+without rereading the prior conversation.
+
+## Resume Instructions
+Commands or pages to read first. Frame as: "Read X, then Y, then run Z."
+```
+
 ### code-source
 
 A lightweight pointer to a code repository in `sources/raw/code/`.
@@ -410,7 +453,7 @@ Source code lives at `/p/gh/<name>`.
 ```yaml
 id: string              # stable identifier (kebab-case)
 title: string           # human-readable title
-kind: normative | descriptive | stub
+kind: normative | descriptive | stub | session
 status: draft | accepted | superseded | deprecated
 ```
 

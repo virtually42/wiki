@@ -18,6 +18,7 @@ Canonical source for who edits what.
 | `meta/registry.md`            | shared    | no        |
 | `meta/log.md`                 | llm       | no        |
 | `index.md`                    | llm       | no        |
+| `wip.md`                      | llm       | no        |
 | `tech/index.md`               | llm       | no        |
 | `tech/architecture/**`        | llm       | yes       |
 | `tech/patterns/**`            | llm       | yes       |
@@ -35,6 +36,7 @@ Canonical source for who edits what.
 | `projects/*/interfaces.md`    | shared    | yes       |
 | `projects/*/risk.md`          | shared    | yes       |
 | `projects/*/log.md`           | llm       | no        |
+| `projects/*/wip.md`           | llm       | no        |
 | `projects/*/syntheses/**`     | llm       | yes       |
 | `sources/raw/**`              | human     | no        |
 | `sources/summaries/**`        | llm       | yes       |
@@ -78,4 +80,5 @@ ownership_reason: This decision is still in active human deliberation.
 - **projects/*/index.md is llm**: generated from frontmatter. Hand-edits will be lost.
 - **tools/ is human**: executable scripts should not be modified by the agent operating under those scripts.
 - **scratch/ is human**: personal working notes. Agent reads if asked, never writes, lint never enforces — outside the schema by design.
+- **wip.md (top-level and projects/*/wip.md) is llm**: session handoff state, overwritten each session. Like `log.md`, hand-edits will be lost on next `wip` invocation.
 
