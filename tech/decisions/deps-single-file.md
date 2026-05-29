@@ -19,6 +19,7 @@ used_by:
   - projects/safetensors-scala/adr/0001-adopt-deps-single-file.md
   - projects/dependency-manager/adr/0001-deviate-deps-single-file.md
   - projects/tagless/adr/0002-deviate-deps-single-file.md
+  - projects/shapesdsl/adr/0002-deviate-deps-single-file.md
 sources:
   - tech/guides/mill-dependency-management.md
 supersedes: []

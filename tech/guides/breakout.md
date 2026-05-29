@@ -284,6 +284,7 @@ Surface to the human:
 | [[projects/sourceline-manager]] | (origin pre-dates wiki) | `/p/hg/sourceline-manager` | Single-module, no platform surface, one dep. Reference case for the *minimum* shape. |
 | [[projects/toolbox]] | `/p/v42/toolbox` (per `new-design.md`) | `/p/hg/toolbox` | Ten modules, three platforms, eight library deps. Reference case for the *multi-module / multi-platform* shape and for kebab/camel module-name encoding. |
 | [[projects/tagless]] | `/p/v42/tagless` (no design doc; existing build.mill module boundaries served as layout) | `/p/hg/tagless` | Fourteen modules, two platforms, deliberate fine-grained ten-way split of a monolithic `tags` module. Reference case for the *granular per-concern publish-local* shape and for breaking module-internal cycles (`core ↔ viz`, `core ↔ route`) during a split. |
+| [[projects/shapesdsl]] | `/p/v42/tagless` (sibling extraction; shapesdsl + shapesdslsvg modules) | `/p/hg/shapesdsl` | Three modules, two platforms, one cross-repo dep (`tagless-core` via publishLocal SNAPSHOT). Reference case for *cross-repo wiring* between sibling breakouts. |
 
 ## Related Pages
 

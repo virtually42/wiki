@@ -1,7 +1,7 @@
 ---
 id: dm-architecture-2026q2-refresh
 title: dm DESIGN.md refresh proposal (2026-Q2)
-kind: design-doc
+kind: descriptive
 status: superseded
 project: dependency-manager
 created: 2026-05-29

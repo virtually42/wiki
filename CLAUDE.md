@@ -18,6 +18,9 @@ to find relevant pages. Use frontmatter glob to narrow scope.
 - **test** — Run tests, capture results, update wiki with observations
 - **run** — Execute the system, observe behavior, update wiki
 
+### Session
+- **wip** — Save current work state for handoff to a clean session. Writes `projects/<name>/wip.md` for project-scoped work, or top-level `wip.md` for cross-cutting work. Overwrites prior contents — history belongs in `log.md`. Required sections: Goal, Status, Files Touched, Decisions, Blockers, Next Step, Resume Instructions. Frontmatter: `updated: YYYY-MM-DD`, `project: <name|null>`, `branch: <git-branch>`, `related: []` (tickets/plans/designs).
+
 ### Wiki Maintenance
 - **promote** — Elevate a local pattern to global based on evidence
 - **edit** — Modify a wiki page (check ownership first)

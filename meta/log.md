@@ -7,6 +7,182 @@ events live in `projects/<name>/log.md`.
 
 ---
 
+## [2026-05-29] lint | post-tagless / post-shapesdsl / post-deploymentbox-v2 sweep
+
+Full lint after a high-volume day: tagless breakout (14 modules, 2
+ADRs), shapesdsl breakout (3 modules, 2 ADRs, **all untracked in
+git**), deploymentbox v1 → v2 supersession (6 ADRs, 2 designs), and
+dm's tdd-rhythm + symmetric-refactoring adoption ADRs landing on
+the same day the patterns went `accepted`.
+
+### Snapshot
+
+- 8 on-disk projects (was 5 last lint): `compositor`,
+  `sourceline-manager`, `toolbox`, `safetensors-scala`,
+  `dependency-manager`, **`tagless`**, **`shapesdsl`**,
+  **`deploymentbox`**.
+- 6 accepted normative pages + 1 draft (`tidy-first-commits`,
+  unchanged).
+- 5 external-lib bridges (`mill`, `kyo`, `airstream`,
+  `toml-scala`, `microvm-nix`).
+
+### Drift delta vs previous run
+
+**Closed (carried to historical)**: DRIFT-023 (all three
+sub-findings closed by the 2026-05-29 commit sweep — already
+recorded in previous drift report).
+
+**Opened (8 new entries)**:
+
+| ID | Severity | Subject |
+|----|----------|---------|
+| DRIFT-024 | medium | Post-promotion fan-out — 17 missing-declaration cells across 5 projects × 3–4 patterns. Supersedes DRIFT-020. |
+| DRIFT-025 | low | `tech/index.md` flags `test-economics` as `(draft)`; page is `accepted`. |
+| DRIFT-026 | low | `dm-architecture-2026q2-refresh.md` uses invalid `kind: design-doc`. |
+| DRIFT-027 | low | tagless ADR-0002 + shapesdsl ADR-0002 have bare-path `deviations:` instead of `{page, rationale, severity, mitigated_by}`. |
+| DRIFT-028 | medium | deploymentbox ADR-0006 `adopts` a `descriptive` source summary; POLICY requires `normative status: accepted`. |
+| DRIFT-029 | low | deploymentbox ADR-0006 `exceptions:` / `deviations:` use `layer:` instead of `page:`. Consequential to DRIFT-028. |
+| DRIFT-030 | low | Stale §Adopters / §Open Questions prose in `functional-domain-design.md`, `tdd-rhythm.md`, `symmetric-refactoring.md`. |
+| DRIFT-031 | low | shapesdsl ADRs not back-referenced in `functional-domain-design.md` and `deps-single-file.md` `used_by`. |
+| DRIFT-032 | info | `projects/shapesdsl/` + 2 sources/tmp + summaries paths untracked in git; project missing from `index.md`. |
+
+**Carryover (unchanged)**: DRIFT-013, DRIFT-014, DRIFT-015.
+DRIFT-020 superseded by DRIFT-024 (same root issue, wider scope).
+
+### Bidirectional integrity verified
+
+- `deps-single-file.md` `used_by` cross-checked against 8 cited
+  ADRs: 7 of 8 listed back-references match an `adopts` /
+  `deviations` claim on the ADR side; **shapesdsl/0002 is the
+  one missing back-reference** (DRIFT-031).
+- `functional-domain-design.md` `used_by` cross-checked against
+  5 cited ADRs: 5 of 6 actual adopting ADRs are listed;
+  **shapesdsl/0001 is the one missing back-reference** (DRIFT-031).
+- `tdd-rhythm.md` / `symmetric-refactoring.md` / `test-economics.md`
+  `used_by`: every listed ADR exists and adopts; no fabrications.
+
+### Notable observations
+
+- **First time the wiki has a normative ADR pointing at a
+  `descriptive` page** (DRIFT-028). The author flagged it in the
+  deploymentbox log entry the same day — the violation is
+  acknowledged, not unnoticed. The resolution path is a wiki-shape
+  call: either promote a `tech/patterns/defense-in-depth.md` from
+  the paranoid-NixOS summary (POLICY admits one-project promotion
+  when the solution is clearly reusable) or rewrite ADR-0006 body-
+  only and clear `compliance.adopts`. Neither is purely mechanical.
+- **The 17-cell fan-out (DRIFT-024) is the dominant finding**.
+  It's the expected post-promotion shape: four patterns went
+  `accepted` on 2026-05-29 against a project cohort that grew
+  from 5 to 8 the same day. The cells split roughly: compositor 3
+  (carryover from DRIFT-020), safetensors-scala 4 (the only
+  project missing FDD), toolbox 3, tagless 3, shapesdsl 3, dm 1
+  (test-economics only).
+- **Schema drifts are low-volume but real** (DRIFT-025 / 026 /
+  027). The tagless and shapesdsl `deviations:` malformation
+  shares a template — both breakouts produced the same bare-path
+  shape. Worth fixing at the source if `tech/guides/breakout.md`
+  ships an ADR template snippet.
+- **shapesdsl integration is half-finished** (DRIFT-032). Four
+  on-disk files untracked, missing from top-level `index.md`. The
+  ADRs themselves are well-formed and well-located; the
+  registration sweep just didn't complete. Cheap to close.
+
+### What this run did NOT do
+
+- Did **not** draft any of the 17 DRIFT-024 cells. Volume +
+  per-project ADR-shape calls (adopt vs ignore vs forward-look
+  for symmetric-refactoring on projects with no operator
+  catalogue) warrant human sequencing.
+- Did **not** auto-fix DRIFT-025 / 026 / 031 even though they are
+  one-line mechanical edits. Deferred to a remediation pass so
+  the next lint sees a clean delta.
+- Did **not** rewrite the stale §Adopters / §Open Questions prose
+  flagged by DRIFT-030. Defer until DRIFT-024 is largely closed
+  so the rewrite is from a stable state.
+
+Refs:
+[[meta/drift]],
+[[projects/tagless/log]],
+[[projects/shapesdsl/log]],
+[[projects/deploymentbox/log]],
+[[projects/dependency-manager/log]]
+
+---
+
+## [2026-05-29] ingest | shapesdsl — second of four sibling breakouts from /p/v42/tagless
+
+Executed `breakout` on the 2D shape + heatmap DSL family. Second of
+the four sibling breakouts forecast in the tagless ingest entry
+(tagless → shapesdsl → animdsl → presenter). Sequencing forced by
+the cross-repo dep: `shapesdsl-svg` consumes `tagless-core` via
+publishLocal SNAPSHOT, so `tagless` had to be `mill __.publishLocal`'d
+before this run.
+
+Destination: `/p/hg/shapesdsl`. Three modules under
+`no.virtual-architect:shapesdsl-<kebab>`:
+
+- `core` — Shape ADT, ShapeScene, ShapeStyle, ColorScale, Effect, dsl (no deps)
+- `heatmap` — Heatmap ADT; JVM-only HeatmapImage (Java2D) + HeatmapDemo
+- `svg` — SvgShapeInterpreter; depends on `tagless-core`
+
+The source's two-module structure (`shapesdsl`, `shapesdslsvg`) split
+further into three to keep `core` free of the Java2D + Heatmap weight
+and free of the cross-repo `tagless-core` dep.
+
+Created:
+
+- `sources/tmp/shapesdsl.md` — bridge (staged; human promotes after
+  initial commit)
+- `sources/summaries/shapesdsl.md` — distilled summary
+- `projects/shapesdsl/{index, log}.md`
+- `projects/shapesdsl/adr/0001-adopt-functional-domain-design.md`
+- `projects/shapesdsl/adr/0002-deviate-deps-single-file.md`
+
+Touched:
+
+- `index.md` §Projects — added shapesdsl row (alphabetised)
+- `tech/patterns/functional-domain-design` — added
+  `projects/shapesdsl/adr/0001` to `used_by`
+- `tech/decisions/deps-single-file` — added
+  `projects/shapesdsl/adr/0002` to `used_by` (deviation)
+- `tech/guides/breakout` §Existing Breakouts — added shapesdsl row
+
+Three observations worth flagging:
+
+1. **Fourth consecutive breakout to deviate from
+   [[tech/decisions/deps-single-file]].** sourceline-manager,
+   toolbox-pre-DM, tagless, shapesdsl. The carve-out hypothesis is
+   now well-supported — worth drafting a "fine-grained standalone
+   breakout" exception in the decision itself rather than continuing
+   per-project deviation ADRs.
+2. **Cross-repo publishLocal pattern works cleanly.** First time we
+   have a `/p/hg/<a>` depending on a `/p/hg/<b>` artifact. Pattern:
+   carry the upstream version as `V.<name>: String = "0.1.0-SNAPSHOT"`
+   in the consumer's `object V`; reference as
+   `mvn"${V.organization}::<upstream-module>::${V.<name>}"`. Mill
+   resolves `_3` vs `_sjs1_3` from the consuming Cross variant.
+   Worth adding to [[tech/guides/breakout]] §Phase 4 as a recipe.
+3. **`Scala.js sub-package conflict`** — first attempt placed the
+   moved `heatmap[T]` factory in a sub-package `package shapesdsl.heatmap`.
+   JS compilation rejected it with "Trying to define package with
+   same name as class heatmap". JVM was fine. Root cause unclear
+   (the only `Heatmap`-shaped name in scope is the uppercase case
+   class; case sensitivity should not collide). Worked around with
+   a top-level `object Heatmaps` in `package shapesdsl`. Flagged in
+   [[sources/summaries/shapesdsl]] §Observations as worth a pitfall
+   entry in [[tech/guides/mill-cross-platform]] if it recurs.
+
+Build verified: `mill resolve __` ✓, `mill __.compile` ✓ (3 modules
+× 2 platforms), `mill __.fastLinkJS` ✓, per-module `testForked` ✓
+across all three modules, `mill __.publishLocal` ✓ (6 artifacts in
+`~/.ivy2/local`).
+
+Refs: [[sources/tmp/shapesdsl]] · [[sources/summaries/shapesdsl]] ·
+[[projects/shapesdsl]] · [[tech/guides/breakout]]
+
+---
+
 ## [2026-05-29] implement | deploymentbox v2 — Firecracker microVM + MinIO + SHA verify + paranoid-NixOS hardening
 
 User pushed back on the v1 design (registered earlier the same day)

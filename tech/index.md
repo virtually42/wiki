@@ -15,7 +15,7 @@ descriptive pages create awareness.
 - [patterns/functional-domain-design.md](patterns/functional-domain-design.md) — Functional Domain Design (immutable model + constructors + operators + encoding choice)
 - [patterns/tdd-rhythm.md](patterns/tdd-rhythm.md) — TDD Rhythm: type-first, red/green/refactor, law-and-example
 - [patterns/symmetric-refactoring.md](patterns/symmetric-refactoring.md) — Symmetric Refactoring: symmetry is the signal an algebra wants to be born
-- [patterns/test-economics.md](patterns/test-economics.md) — Test Economics: every test and every skipped test is a transaction *(draft)*
+- [patterns/test-economics.md](patterns/test-economics.md) — Test Economics: every test and every skipped test is a transaction
 
 ## Anti-Patterns (normative)
 

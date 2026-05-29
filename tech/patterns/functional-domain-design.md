@@ -17,6 +17,7 @@ used_by:
   - projects/toolbox/adr/0001-adopt-functional-domain-design.md
   - projects/dependency-manager/adr/0002-adopt-functional-domain-design.md
   - projects/tagless/adr/0001-adopt-functional-domain-design.md
+  - projects/shapesdsl/adr/0001-adopt-functional-domain-design.md
 promoted_from: []
 sources:
   - sources/summaries/introduction_to_functional_design_john_de_goes.md
