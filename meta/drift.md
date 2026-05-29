@@ -49,13 +49,13 @@ to remediate, override, or accept.
 | DRIFT-020 | missing-declaration | medium | **open — superseded by DRIFT-024** (scope grew with new projects + new patterns) |
 | DRIFT-023 | pending-promotion | informational | ~~resolved 2026-05-29~~ — moved to historical |
 | DRIFT-024 | missing-declaration | medium | **open** (new — post-promotion fan-out across 7 projects × 4 patterns) |
-| DRIFT-025 | stale-index-annotation | low | **open** (new — `tech/index.md` flags `test-economics` as `(draft)`; page is `accepted`) |
-| DRIFT-026 | invalid-kind | low | **open** (new — `dm-architecture-2026q2-refresh.md` uses `kind: design-doc`; schema allows only `normative | descriptive | stub`) |
+| DRIFT-025 | stale-index-annotation | low | ~~resolved 2026-05-29~~ — `(draft)` annotation removed from `tech/index.md` |
+| DRIFT-026 | invalid-kind | low | ~~resolved 2026-05-29~~ — `kind: design-doc` → `kind: descriptive` on `dm-architecture-2026q2-refresh.md` |
 | DRIFT-027 | malformed-compliance | low | **open** (new — tagless ADR-0002 + shapesdsl ADR-0002 have bare-path `deviations:`; schema requires `{page, rationale, severity, mitigated_by}`) |
 | DRIFT-028 | wrong-kind-adoption | medium | **open** (new — deploymentbox ADR-0006 `adopts` a `descriptive` source summary; POLICY requires `adopts` targets to be `kind: normative status: accepted`) |
 | DRIFT-029 | non-schema-compliance-fields | low | **open** (new — deploymentbox ADR-0006 uses `layer:` keys instead of `page:` in `exceptions:` / `deviations:`; related to DRIFT-028) |
 | DRIFT-030 | stale-page-content | low | **open** (new — `tdd-rhythm.md`, `symmetric-refactoring.md`, `functional-domain-design.md` carry "Adopters" / "Open Questions" prose that pre-dates current `used_by` reality) |
-| DRIFT-031 | missing-back-reference | low | **open** (new — shapesdsl/0001 not listed in functional-domain-design `used_by`; shapesdsl/0002 not listed in deps-single-file `used_by`; tagless/0002 was added, shapesdsl symmetric edit was not) |
+| DRIFT-031 | missing-back-reference | low | ~~resolved 2026-05-29~~ — shapesdsl/0001 added to `functional-domain-design` `used_by`; shapesdsl/0002 added to `deps-single-file` `used_by` |
 | DRIFT-032 | untracked-project | informational | **open** (new — `projects/shapesdsl/`, `sources/tmp/shapesdsl.md`, `sources/summaries/shapesdsl.md` exist on disk but are untracked in git; not in top-level `index.md`) |
 
 **Bidirectional integrity check** for the deps-single-file
@@ -71,7 +71,7 @@ sub-graph after this run:
 | safetensors-scala/0001 | accepted | adopts + 1 exception | ✓ |
 | dm/0001 | accepted | deviates | ✓ |
 | tagless/0002 | accepted | deviates (malformed entry — DRIFT-027) | ✓ |
-| shapesdsl/0002 | accepted | deviates (malformed entry — DRIFT-027) | **✗ — missing in `used_by`** (DRIFT-031) |
+| shapesdsl/0002 | accepted | deviates (malformed entry — DRIFT-027) | ✓ (added 2026-05-29 — closed DRIFT-031) |
 
 **functional-domain-design** sub-graph:
 
@@ -82,7 +82,7 @@ sub-graph after this run:
 | toolbox/0001 | accepted | ✓ |
 | dm/0002 | accepted | ✓ |
 | tagless/0001 | accepted | ✓ |
-| shapesdsl/0001 | accepted | **✗ — missing in `used_by`** (DRIFT-031) |
+| shapesdsl/0001 | accepted | ✓ (added 2026-05-29 — closed DRIFT-031) |
 
 ---
 
@@ -221,52 +221,27 @@ Same shape in `symmetric-refactoring.md`. Tracked under DRIFT-030.
 
 ---
 
-## DRIFT-025 — stale-index-annotation — NEW
+## ~~DRIFT-025~~ — stale-index-annotation — RESOLVED 2026-05-29
 
 **Category**: stale-index-annotation
 **Severity**: low
-**Subject**: `tech/index.md` line 18
+**Status**: **resolved** 2026-05-29
 
-`tech/index.md` annotates `tech/patterns/test-economics.md` as
-`*(draft)*`. The page's frontmatter is `status: accepted` (since
-2026-05-29). The index annotation pre-dates the promotion and was
-not updated when the page was promoted.
-
-### Remediation
-
-Drop the `*(draft)*` suffix on the test-economics line in
-`tech/index.md`. One-line edit; page is `llm`-owned.
-
-`tech/decisions/tidy-first-commits.md` legitimately remains `draft`
-and the `*(draft)*` annotation on its line is correct.
+`*(draft)*` annotation removed from the `test-economics` line in
+`tech/index.md`. `tech/decisions/tidy-first-commits.md`
+legitimately remains `draft` and keeps its `*(draft)*` annotation.
 
 ---
 
-## DRIFT-026 — invalid-kind — NEW
+## ~~DRIFT-026~~ — invalid-kind — RESOLVED 2026-05-29
 
 **Category**: invalid-kind
 **Severity**: low
-**Subject**: `projects/dependency-manager/designs/dm-architecture-2026q2-refresh.md`
+**Status**: **resolved** 2026-05-29
 
-The page frontmatter declares `kind: design-doc`. Per
-[[meta/schema]] §"Required for all pages", the only admissible
-values for `kind` are `normative | descriptive | stub`. The schema
-*type* of a page (design-doc, decision, pattern, …) is a
-descriptor in the schema's Page Type Catalog, not a `kind` value;
-design-docs use `kind: descriptive`.
-
-Every other design doc on disk (`compositor/designs/input-pipeline`,
-`dependency-manager/designs/dm-architecture`,
-`deploymentbox/designs/release-pipeline`,
-`deploymentbox/designs/release-pipeline-v2-microvm`) correctly uses
-`kind: descriptive`. The 2026q2-refresh page is the lone outlier.
-
-### Remediation
-
-Change `kind: design-doc` → `kind: descriptive`. One-line edit;
-page is `shared`-owned (it lives under `projects/*/designs/**`).
-Status is already `superseded`, so the page is read-only history —
-the fix is purely a frontmatter correction.
+`kind: design-doc` → `kind: descriptive` on
+`projects/dependency-manager/designs/dm-architecture-2026q2-refresh.md`.
+All design docs on disk now use `kind: descriptive`.
 
 ---
 
@@ -417,23 +392,15 @@ point the prose can be rewritten from a more stable state.
 
 ---
 
-## DRIFT-031 — missing-back-reference — NEW
+## ~~DRIFT-031~~ — missing-back-reference — RESOLVED 2026-05-29
 
 **Category**: missing-back-reference
 **Severity**: low
-**Subjects**:
-- `tech/patterns/functional-domain-design.md` `used_by` does **not** list `projects/shapesdsl/adr/0001-adopt-functional-domain-design.md`.
-- `tech/decisions/deps-single-file.md` `used_by` does **not** list `projects/shapesdsl/adr/0002-deviate-deps-single-file.md`.
+**Status**: **resolved** 2026-05-29
 
-Both shapesdsl ADRs cite their normative pages in `compliance.adopts`
-/ `compliance.deviations`; the back-references are missing. The
-tagless ADRs were added to `used_by` when the project was
-registered; the shapesdsl equivalents were not.
-
-### Remediation
-
-Two single-line additions, one per `used_by` list. Both pages are
-`llm`-owned for `used_by` maintenance per POLICY.
+Both shapesdsl ADRs now back-referenced:
+- `tech/patterns/functional-domain-design.md` `used_by` lists `projects/shapesdsl/adr/0001-adopt-functional-domain-design.md`.
+- `tech/decisions/deps-single-file.md` `used_by` lists `projects/shapesdsl/adr/0002-deviate-deps-single-file.md`.
 
 ---
 
@@ -543,11 +510,14 @@ closure log. No carryover from this entry.
 
 ## Notes for Human
 
-- **Open items: 11** (4 carryover — DRIFT-013 / 014 / 015 / 020;
-  7 new — DRIFT-024 / 025 / 026 / 027 / 028 / 030 / 031;
-  2 informational — DRIFT-029 (consequential) / 032; DRIFT-020 is
-  superseded by DRIFT-024 so the active-cell count is effectively
-  9 + the 17-cell matrix).
+- **Open items: 8** after the mechanical remediation pass (4
+  carryover — DRIFT-013 / 014 / 015 / 020; 4 new — DRIFT-024 /
+  027 / 028 / 030; 2 informational — DRIFT-029 (consequential) /
+  032). DRIFT-020 is superseded by DRIFT-024, so the active-cell
+  count is effectively 6 + the 17-cell matrix.
+- **Closed in remediation pass (2026-05-29)**: DRIFT-025
+  (test-economics annotation), DRIFT-026 (`kind: design-doc`),
+  DRIFT-031 (shapesdsl `used_by` back-references).
 - **What this run did**:
   - Inventoried 8 on-disk projects + 6 accepted normative pages
     (deps-single-file + 4 patterns).
@@ -577,14 +547,14 @@ closure log. No carryover from this entry.
     second NixOS hardening consumer is expected.
   - **DRIFT-032 git-tracking**: `git add` the three untracked
     shapesdsl paths and append a `shapesdsl` row to `index.md`.
-- **Mechanical fixes the agent can do without further human input**
-  (deferred to next pass for atomic remediation):
-  - DRIFT-025 (one-line annotation fix in `tech/index.md`).
-  - DRIFT-026 (one-line `kind:` fix in `dm-architecture-2026q2-refresh.md`).
-  - DRIFT-031 (two `used_by` additions for shapesdsl ADRs).
+- **Mechanical fixes still pending**:
   - DRIFT-030 (rewrite stale §Adopters / §Open Questions prose
-    on three pattern pages — defer until DRIFT-024 is largely
+    on three pattern pages — deferred until DRIFT-024 is largely
     closed so the rewrite is from a stable state).
+  - DRIFT-027 (restructure `deviations:` frontmatter on tagless
+    ADR-0002 + shapesdsl ADR-0002 from bare path to
+    `{page, rationale, severity, mitigated_by}`; content already
+    in the body, mechanical lift).
 - **Stays open by design**: DRIFT-013 (informational, descriptive).
 - **No DRIFT-023-style sequenced human-gated work** introduced
   this run.

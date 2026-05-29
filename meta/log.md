@@ -7,6 +7,39 @@ events live in `projects/<name>/log.md`.
 
 ---
 
+## [2026-05-29] lint | mechanical remediation — DRIFT-025 / 026 / 031 closed
+
+Human-requested follow-up to the lint sweep below. Three
+mechanical drifts closed in the same session:
+
+- **DRIFT-025**: dropped `*(draft)*` annotation on the
+  `test-economics` line in `tech/index.md`. Page has been
+  `accepted` since 2026-05-29 promotion.
+- **DRIFT-026**: `kind: design-doc` → `kind: descriptive` on
+  `projects/dependency-manager/designs/dm-architecture-2026q2-refresh.md`.
+  Only invalid `kind` value on disk; brings the page into schema
+  conformance (status remains `superseded`).
+- **DRIFT-031**: added `projects/shapesdsl/adr/0001-adopt-functional-domain-design.md`
+  to `tech/patterns/functional-domain-design.md` `used_by`; added
+  `projects/shapesdsl/adr/0002-deviate-deps-single-file.md` to
+  `tech/decisions/deps-single-file.md` `used_by`. Bidirectional
+  integrity restored — `used_by` now matches every `adopts:` /
+  `deviations:` claim on the project side.
+
+Drift report Summary table updated; resolved entries condensed to
+two-line closure stubs. Open count drops from 11 to 8 (effectively
+6 + the 17-cell DRIFT-024 matrix).
+
+Mechanical drifts remaining: DRIFT-027 (bare-path `deviations:`
+on tagless/0002 + shapesdsl/0002 — restructure pending) and
+DRIFT-030 (stale §Adopters / §Open Questions prose on three
+pattern pages — deferred until DRIFT-024 closes for a stable
+rewrite state).
+
+Refs: [[meta/drift]]
+
+---
+
 ## [2026-05-29] lint | post-tagless / post-shapesdsl / post-deploymentbox-v2 sweep
 
 Full lint after a high-volume day: tagless breakout (14 modules, 2
