@@ -328,10 +328,19 @@ currency" is needed because the type forbids it.
 
 ## Open Questions / Drift Signals
 
-- **In-scope projects must now declare stance.** Accepted 2026-05-29
-  with `scope: global`; `compositor` and `sourceline-manager` are
-  in scope. Both lack adoption ADRs today — expected post-promotion
-  state, will surface as missing-declaration on next lint.
+- **Adoption matrix (post-2026-05-29 fan-out).** In-scope
+  projects: `compositor`, `sourceline-manager`, `toolbox`,
+  `safetensors-scala`, `dependency-manager`, `tagless`,
+  `shapesdsl` (`deploymentbox` excluded — `nix-modules` exclude
+  applies). Current state:
+  - **Adopts**: `sourceline-manager`
+    ([[projects/sourceline-manager/adr/0003-adopt-tdd-rhythm]],
+    full PBT realisation); `dependency-manager`
+    ([[projects/dependency-manager/adr/0003-adopt-tdd-rhythm]],
+    bounded exception on Stage 2 law-based pending symmetric
+    operators).
+  - **Missing**: compositor, toolbox, safetensors-scala, tagless,
+    shapesdsl. Tracked as cells of [[meta/drift]] §DRIFT-024.
 - **DRIFT-015h closed 2026-05-29.** `sourceline-manager` now ships
   a reusable `MonoidLawsSuite[A]` (MUnit-ScalaCheck `ScalaCheckSuite`
   + `forAll`) parameterised by generator + `empty` + `combine`;
@@ -347,8 +356,9 @@ currency" is needed because the type forbids it.
 - A *third* TDD source — Beck's *TDD by Example* (book) — would
   close DRIFT-014a / 014c / 014d / 014f in
   [[sources/summaries/tdd_course_notes_kent_beck_pierodibello]] at
-  once and would justify raising `confidence` from `medium` to
-  `high` (alongside DRIFT-015h closure).
+  once. `confidence: high` already reached via DRIFT-015h closure;
+  the book would broaden the source base rather than raise
+  confidence further.
 
 ## Links
 

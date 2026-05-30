@@ -2,7 +2,8 @@
 id: deploymentbox-adr-0001
 title: Hetzner Cloud CX32 NixOS as the build host
 kind: normative
-status: accepted
+status: superseded
+superseded_by: projects/deploymentbox/adr/0007-build-on-github-with-attestations.md
 project: deploymentbox
 created: 2026-05-29
 compliance:

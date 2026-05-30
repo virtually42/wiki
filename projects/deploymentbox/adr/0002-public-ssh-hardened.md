@@ -2,7 +2,8 @@
 id: deploymentbox-adr-0002
 title: Public SSH on port 22, key-only, hardened, no VPN layer
 kind: normative
-status: accepted
+status: superseded
+superseded_by: projects/deploymentbox/adr/0007-build-on-github-with-attestations.md
 project: deploymentbox
 created: 2026-05-29
 compliance:

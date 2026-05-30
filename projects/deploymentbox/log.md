@@ -6,6 +6,143 @@ Append-only project log.
 
 ---
 
+## [2026-05-30] adr | v3 pivot — GitHub Actions + sigstore attestation supersedes v2 microVM substrate for public OSS
+
+Day after v2 landed, the operator returned with a re-framed
+question: would the *much simpler* path of "let GitHub build,
+download to laptop, sign there, upload to Sonatype, re-verify on
+clean machine" be just as secure as v2's Hetzner + Firecracker +
+MinIO substrate?
+
+In conversation: yes, for **public OSS specifically**, with one
+material caveat — a plain SHA from GitHub is integrity-in-transit
+only; it does not prove *what was built from what source*. The
+primitive that makes v3 actually competitive with v2 on the
+threat model is the **sigstore-signed build provenance
+attestation** (`actions/attest-build-provenance`, GA 2024). The
+attestation cryptographically binds artifact bytes → source commit
+SHA → workflow run, witnessed in a public transparency log via the
+runner's short-lived GitHub OIDC identity. That's SLSA Build L3 —
+*stronger* than v2's bare SHA-256 manifest, which only proved "the
+host signed what the microVM emitted."
+
+With attestations in scope, v3's trade-off vs v2 net-favors
+v3 for public OSS:
+
+- **Loses:** operator-controlled build substrate, custom hardening
+  surface, "single chokepoint we own end-to-end."
+- **Gains:** €0 cost (saves €7-8/mo), cryptographic source-to-artifact
+  provenance, ephemeral fresh-every-run runners, zero host
+  maintenance, public reproducibility (anyone can fork and re-run
+  the tag), no SSH-forwarding ceremony, signing key responses never
+  leave the laptop USB bus.
+
+The single new trust extension — GitHub Actions infrastructure for
+the build — is a small delta relative to "GitHub already hosts the
+source." The clean-machine re-verify step (pull from Maven Central
+on a host independent of the laptop, run `gpg --verify` +
+`sha256sum` re-check + `gh attestation verify`) is the
+trust-but-verify capstone.
+
+**Scope is explicitly public-OSS-only.** Recorded in ADR-0007 as a
+load-bearing scope decision: if any future `no.virtual-architect`
+artifact needs to ship privately, it must reach for a v2-shaped
+self-managed pipeline, *not* extend v3. The v2 design + ADRs
+0001/0005/0006 are preserved with `status: superseded` precisely so
+they remain available as a starting point.
+
+Created:
+
+- `projects/deploymentbox/designs/release-pipeline-v3-github-attested.md`
+  — v3 design (architecture, per-release flow, secrets map, trust
+  model, threat model, trade-off table vs v2, open questions
+  including "should we do local reproducible-build cross-check
+  before sign?", "where to publish the project GPG public key?",
+  "disposition of staged v2 repo work?").
+- `projects/deploymentbox/adr/0007-build-on-github-with-attestations.md`
+  — load-bearing v3 decision; supersedes 0001/0002/0003/0005/0006;
+  records per-library workflow invariants (pinned action SHAs,
+  `id-token`+`attestations` permissions, separate test workflow,
+  attestation over every published artifact); rejects "sign on
+  runner with key in Secrets", "cloud HSM", "skip attestation and
+  just trust SHA", "self-hosted runner".
+
+Marked superseded (frontmatter `status: superseded`,
+`superseded_by:` pointing to 0007 or v3 design):
+
+- `projects/deploymentbox/designs/release-pipeline-v2-microvm.md`
+- `projects/deploymentbox/adr/0001-host-hetzner-nixos.md`
+- `projects/deploymentbox/adr/0002-public-ssh-hardened.md`
+- `projects/deploymentbox/adr/0003-signing-yubikey-forwarded.md`
+  (key-custody contract carries over and is *strengthened*; only the
+  SSH-forwarding transport is gone)
+- `projects/deploymentbox/adr/0005-build-in-firecracker-microvm.md`
+- `projects/deploymentbox/adr/0006-adopt-paranoid-nixos-hardening.md`
+
+ADR-0004 (tag-driven Central releases, one GPG key, no snapshots,
+groupId `no.virtual-architect`, Sonatype Central Portal endpoint)
+**remains accepted unchanged** — v3 inherits all of it.
+
+Updated:
+
+- `projects/deploymentbox/index.md` — rewritten for v3 (stack,
+  role-in-wiki diagram, ADR list partitioned into accepted-v3 and
+  superseded, pages list, out-of-scope, open questions).
+- `projects/deploymentbox/wip.md` — overwritten with v3 status
+  (blockers shift: namespace TXT still pending, but now also need
+  first library `release.yml`, operator-side release script, and
+  disposition of `/p/hg/deploymentbox/` staged v2 work).
+- `index.md` (top-level) — deploymentbox project row updated
+  for v3 stack + status.
+
+Notable observations:
+
+- **Two design pivots inside 24 hours.** v1 was created and
+  superseded in the 2026-05-29 session; v2 was created and
+  superseded on 2026-05-30. The wiki's
+  "preserve-superseded-rather-than-delete" pattern is doing real
+  work here — the v2 design + ADRs are the documented starting
+  point for any future private-artifact pipeline, and the
+  rejected-branches sections in each ADR's "Alternatives
+  Considered" preserve the reasoning trail. The cost is six
+  superseded ADRs against two accepted ones, but the reasoning is
+  fully reconstructible.
+- **The "GitHub-hosted runner" rejection in ADR-0001 aged out, not
+  was wrong.** ADR-0001's two objections to GitHub runners were
+  (a) unpinned toolchain and (b) Secrets-only key custody. The
+  flake-pinned toolchain pattern (Volpe) makes (a) moot; sigstore
+  attestation lets us *separate* the build from the sign so (b)
+  becomes irrelevant. ADR-0007 §Context narrates this explicitly
+  so the rejection's history isn't mysterious to future readers.
+- **First wiki use of sigstore / SLSA / attestation primitives.**
+  Nothing in `tech/decisions/` or `tech/patterns/` mentions
+  sigstore or SLSA. If a second project ever adopts a similar
+  "CI-built + attested + local-sign" pattern, the promotion
+  candidate is something like
+  `tech/patterns/ci-attested-local-signed-release.md`. Premature
+  with one consumer (the deploymentbox project itself, applied to
+  N libraries). Revisit if a non-Maven distribution path (e.g. npm
+  for a generated TS package, or container images) ever adopts the
+  same shape.
+- **Two `release.yml` invariants worth promoting eventually.**
+  ADR-0007 commits each library to (a) pinning every `uses:` to a
+  commit SHA and (b) splitting `test.yml` (PR-time, no elevated
+  permissions) from `release.yml` (tag-triggered, with
+  `id-token`+`attestations`). Both are general GitHub Actions
+  hygiene; if more projects adopt v3-style pipelines, these become
+  candidates for `tech/patterns/github-actions-release-hygiene.md`.
+
+Refs:
+[[projects/deploymentbox/designs/release-pipeline-v3-github-attested]],
+[[projects/deploymentbox/adr/0007-build-on-github-with-attestations]],
+[[projects/deploymentbox/designs/release-pipeline-v2-microvm]]
+(superseded),
+[[projects/deploymentbox/adr/0001-host-hetzner-nixos]] (superseded),
+[[projects/deploymentbox/adr/0005-build-in-firecracker-microvm]]
+(superseded),
+[[sources/summaries/github_actions_nix_cachix_dhall_gvolpe]]
+(load-bearing for the runner-hermeticity argument).
+
 ## [2026-05-29] session | end-of-session snapshot — resume tomorrow from here
 
 State of the world at session close. Read this *first* to resume cold;

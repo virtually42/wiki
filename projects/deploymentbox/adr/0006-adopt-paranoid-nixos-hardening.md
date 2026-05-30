@@ -2,7 +2,8 @@
 id: deploymentbox-adr-0006
 title: Adopt selected hardening from Iaso's Paranoid NixOS, defer the rest
 kind: normative
-status: accepted
+status: superseded
+superseded_by: projects/deploymentbox/adr/0007-build-on-github-with-attestations.md
 project: deploymentbox
 created: 2026-05-29
 compliance:

@@ -2,10 +2,11 @@
 id: deploymentbox-design-release-pipeline-v2-microvm
 title: Release pipeline v2 — Firecracker microVM + MinIO + SHA verify
 kind: descriptive
-status: accepted
+status: superseded
+superseded_by: projects/deploymentbox/designs/release-pipeline-v3-github-attested.md
 project: deploymentbox
 created: 2026-05-29
-updated: 2026-05-29
+updated: 2026-05-30
 related_adrs:
   - projects/deploymentbox/adr/0001-host-hetzner-nixos.md
   - projects/deploymentbox/adr/0002-public-ssh-hardened.md

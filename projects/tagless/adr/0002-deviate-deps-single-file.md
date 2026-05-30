@@ -9,7 +9,33 @@ compliance:
   adopts: []
   exceptions: []
   deviations:
-    - tech/decisions/deps-single-file.md
+    - page: tech/decisions/deps-single-file.md
+      rationale: |
+        `tagless` at breakout time is a standalone repository at
+        `/p/hg/tagless`. There is no enclosing monorepo and no
+        central `deps/` to reference. Per `tech/guides/breakout`
+        §Phase 4, version constants are inlined in an `object V`
+        block at the top of `build.mill`; every module reads from
+        `V.*`. The single-source-of-truth invariant is preserved
+        *within* the repository — the deviation is from the
+        *shared-across-projects* form of the decision.
+
+        Same shape as the slm/0002 and toolbox/0002 (now
+        superseded) precedents. `tagless` is expected to follow
+        the same trajectory once it joins a monorepo or migrates
+        to dm.
+      severity: low
+      mitigated_by: |
+        - `object V` is the single source of truth within the repo;
+          all 14 modules consume the same constants. No drift across
+          modules is possible.
+        - Renovate can still parse the `mvn"…::${V.x}"` inline
+          coordinates if pointed at `build.mill`.
+        - Two explicit expiry conditions: (a) embedding in a
+          monorepo with a central `deps/`, (b) opting into the dm
+          catalog. Either condition supersedes this ADR with an
+          `adopt-deps-single-file` ADR (the toolbox/0003
+          trajectory).
   ignores: []
 supersedes: []
 ---

@@ -1,30 +1,33 @@
 ---
-id: shapesdsl-adr-0002
+id: animdsl-adr-0002
 title: Deviate from deps-single-file while standalone
 kind: normative
 status: accepted
-project: shapesdsl
-created: 2026-05-29
+project: animdsl
+created: 2026-05-30
 compliance:
   adopts: []
   exceptions: []
   deviations:
     - page: tech/decisions/deps-single-file.md
       rationale: |
-        `shapesdsl` at breakout time is a standalone repository at
-        `/p/hg/shapesdsl`. There is no enclosing monorepo and no
+        `animdsl` at breakout time is a standalone repository at
+        `/p/hg/animdsl`. There is no enclosing monorepo and no
         central `deps/` to reference. Per `tech/guides/breakout`
         §Phase 4, version constants are inlined in an `object V`
         block at the top of `build.mill`, including the cross-repo
-        SNAPSHOT coordinate for `tagless-core`. The single-source-
-        of-truth invariant is preserved within the repo; the
-        deviation is from the shared-across-projects form.
+        SNAPSHOT coordinate for `tagless-core` (`V.tagless`).
+        The single-source-of-truth invariant is preserved within
+        the repository — the deviation is from the
+        shared-across-projects form of the decision.
 
-        Fourth consecutive breakout to deviate (after slm/0002,
-        toolbox/0002 superseded, tagless/0002). If a fifth project
-        deviates with the same shape, [[tech/decisions/deps-single-file]]
-        itself may warrant a "fine-grained standalone breakout"
-        carve-out rather than per-project ADRs.
+        Fifth consecutive breakout to deviate (after slm/0002,
+        toolbox/0002 superseded, tagless/0002, shapesdsl/0002).
+        The carve-out hypothesis is now over-determined; a
+        "fine-grained standalone breakout" exception in
+        [[tech/decisions/deps-single-file]] itself is the
+        recommended next step, marking the existing per-project
+        deviation ADRs as `superseded` once that lands.
       severity: low
       mitigated_by: |
         - `object V` is the single source of truth within the repo;
@@ -44,15 +47,13 @@ supersedes: []
 
 ## Context
 
-[[tech/decisions/deps-single-file]] mandates a single source-of-truth
-file for external library coordinates and platform versions. The
-decision assumes a monorepo or shared-build context.
+[[tech/decisions/deps-single-file]] mandates a single source-of-
+truth file for external library coordinates and platform versions.
+The decision assumes a monorepo or shared-build context.
 
-`shapesdsl` at breakout time is a **standalone repository** at
-`/p/hg/shapesdsl`. There is no enclosing monorepo and no central
-`deps/` to reference. Per `tech/guides/breakout` §Phase 4, versions
-are inlined in an `object V` block at the top of `build.mill`,
-including the cross-repo SNAPSHOT coordinate for `tagless-core`:
+`animdsl` at breakout time is a **standalone repository** at
+`/p/hg/animdsl`. Per `tech/guides/breakout` §Phase 4, versions are
+inlined in an `object V` block:
 
 ```scala
 object V {
@@ -67,31 +68,32 @@ object V {
 }
 ```
 
-This is the fourth consecutive breakout to deviate from the
-decision: [[projects/sourceline-manager/adr/0002-deviate-deps-single-file]],
+This is the **fifth consecutive** breakout to deviate from the
+decision:
+[[projects/sourceline-manager/adr/0002-deviate-deps-single-file]],
 [[projects/toolbox/adr/0002-deviate-deps-single-file]] (since
-superseded by adoption), [[projects/tagless/adr/0002-deviate-deps-single-file]],
-and now this one.
+superseded by adoption),
+[[projects/tagless/adr/0002-deviate-deps-single-file]],
+[[projects/shapesdsl/adr/0002-deviate-deps-single-file]], and now
+this one.
 
 ## Decision
 
 Deviate from [[tech/decisions/deps-single-file]] for the duration
-of `shapesdsl`'s standalone life. Revisit when:
+of `animdsl`'s standalone life. Revisit when:
 
-- shapesdsl is embedded into a monorepo with a central `deps/`
+- animdsl is embedded into a monorepo with a central `deps/`
 - `dm` (dependency-manager) becomes the canonical source of Maven
-  coordinates and shapesdsl opts in
+  coordinates and animdsl opts in
 - A carve-out in [[tech/decisions/deps-single-file]] itself
   formalizes the "fine-grained standalone breakout" exception
 
 ## Consequences
 
-- Adding a new external dep requires two edits: a constant in
-  `object V` and an `mvn"..."` reference in the consuming module.
-  Acceptable for a 3-module repo.
 - Cross-repo SNAPSHOT coordinates (currently `V.tagless`) are
-  managed the same way as external libs — no special handling.
-  Bumping the upstream version is a single `V.tagless = "..."` edit.
+  managed the same way as external libs. Adding a future
+  `V.shapesdsl` (if presenter ends up consuming shapesdsl via
+  animdsl) is a single-line addition.
 - When the migration to a monorepo or `dm` happens, this ADR is
   superseded by an `adopt-deps-single-file` ADR — the same
   trajectory toolbox followed.
@@ -103,3 +105,4 @@ of `shapesdsl`'s standalone life. Revisit when:
 - [[projects/toolbox/adr/0002-deviate-deps-single-file]] — superseded
 - [[projects/toolbox/adr/0003-adopt-deps-single-file]] — trajectory
 - [[projects/tagless/adr/0002-deviate-deps-single-file]] — sibling
+- [[projects/shapesdsl/adr/0002-deviate-deps-single-file]] — sibling

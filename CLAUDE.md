@@ -11,6 +11,7 @@ to find relevant pages. Use frontmatter glob to narrow scope.
 - **breakout** — Extract a micro-library from a monolithic source repo into its own `/p/hg/<name>` location and register it as a wiki project. Human provides the source path. See `tech/guides/breakout.md`.
 - **query** — Answer a question using wiki knowledge, if answer not found, research using other sources, update wiki with new key insights according to @media/schema.md
 - **lint** — Check wiki consistency, compliance, and drift
+- **conform** — Evidence-check projects against normative patterns using declared fingerprints; produce stance recommendations and draft ADRs in `projects/*/adr/drafts/`. Output: `meta/conformance.md`. See `tech/guides/conformance.md`.
 - **synthesize** — Generate cross-cutting analysis across projects or tech
 
 ### Code Operations
@@ -31,6 +32,16 @@ Before writing any wiki page, check ownership in `meta/ownership.md`.
 - **human**: read only, surface proposals in conversation
 - **llm**: agent owns, may create/edit/delete
 - **shared**: either party edits, agent flags changes for review
+
+### Human-owned edits — fix scripts
+
+When proposed changes target human-owned files, decide which path applies:
+
+- **Obvious** (multiple edits, structured insertions, repeated changes across files): write an idempotent script to `fix/` without asking, then surface the proposal text alongside it.
+- **Uncertain** (single non-trivial edit, or unclear whether automation helps): offer to write a script and let the human decide.
+- **Trivial** (one short edit): surface the proposal as text, no script.
+
+Scripts in `fix/` must be idempotent — re-runs print `skip` for already-applied chunks. Prefer Python with stdlib only.
 
 ## Schema
 

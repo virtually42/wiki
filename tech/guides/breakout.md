@@ -285,6 +285,7 @@ Surface to the human:
 | [[projects/toolbox]] | `/p/v42/toolbox` (per `new-design.md`) | `/p/hg/toolbox` | Ten modules, three platforms, eight library deps. Reference case for the *multi-module / multi-platform* shape and for kebab/camel module-name encoding. |
 | [[projects/tagless]] | `/p/v42/tagless` (no design doc; existing build.mill module boundaries served as layout) | `/p/hg/tagless` | Fourteen modules, two platforms, deliberate fine-grained ten-way split of a monolithic `tags` module. Reference case for the *granular per-concern publish-local* shape and for breaking module-internal cycles (`core ↔ viz`, `core ↔ route`) during a split. |
 | [[projects/shapesdsl]] | `/p/v42/tagless` (sibling extraction; shapesdsl + shapesdslsvg modules) | `/p/hg/shapesdsl` | Three modules, two platforms, one cross-repo dep (`tagless-core` via publishLocal SNAPSHOT). Reference case for *cross-repo wiring* between sibling breakouts. |
+| [[projects/animdsl]] | `/p/v42/tagless` (sibling extraction; animdsl + animdslsvg + animdslooxml modules per `animdsl_specification_and_design.md` §6) | `/p/hg/animdsl` | Three modules, mixed platforms (core+svg JVM+JS, ooxml JVM-only), cross-repo dep on `tagless-core`. Reference case for *design-doc-driven layout* where the spec document is the source of truth, and for *zero structural code changes* during the breakout (no intra-module back-edges). |
 
 ## Related Pages
 

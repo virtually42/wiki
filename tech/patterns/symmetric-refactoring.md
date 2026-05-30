@@ -270,20 +270,36 @@ given Monoid[SourceFile] with
 
 ## Open Questions / Drift Signals
 
-- **In-scope projects must now declare stance.** Promotion to
-  `accepted` 2026-05-29 means `compositor` and `sourceline-manager`
-  are in scope and must adopt, except, deviate, or ignore in an
-  ADR. `sourceline-manager`'s synthesis evidence is already strong;
-  an `adopts` ADR is a short follow-up.
+- **Adoption matrix (post-2026-05-29 fan-out).** In-scope projects
+  are the seven Scala projects on disk (deploymentbox excluded —
+  non-Scala). Current state:
+  - **Adopts**: `sourceline-manager`
+    ([[projects/sourceline-manager/adr/0004-adopt-symmetric-refactoring]],
+    operator-layer realisation: `++` / `|+|` / `combine`, `:+` /
+    `+:`, `appendLine` / `prependLine` pairs);
+    `dependency-manager`
+    ([[projects/dependency-manager/adr/0004-adopt-symmetric-refactoring]],
+    parallel-module realisation: Writer/Reader pairs +
+    Regen/Verify + Extract/Promote verb pairs).
+  - **Missing**: compositor, toolbox, safetensors-scala, tagless,
+    shapesdsl. Tracked as cells of [[meta/drift]] §DRIFT-024.
+- **Parallel-module form may warrant its own page.** The
+  dependency-manager realisation operates at the module / verb
+  layer rather than the operator layer the original page focused
+  on. A second project realising the same module-layer form would
+  satisfy promotion criteria for a separate
+  `tech/patterns/symmetric-pairs-at-module-layer.md` (or for
+  splitting this page). Single data point today.
 - The "name the algebra" move (decision-tree branch 2) overlaps
   with [[tech/patterns/functional-domain-design]]. If the algebra
   pre-exists (the project has already decided "we use monoids
   here"), this pattern collapses into "find the monoid instance."
   If it doesn't, this pattern is *upstream* of the decision to
   introduce an algebra at all. Worth disentangling in a follow-up.
-- The page's claims about pairs in `sourceline-manager` are
-  current as of 2026-05-29; future refactors that break the
-  symmetry without an ADR would be drift visible against this page.
+- The page's claims about pairs in `sourceline-manager` and
+  `dependency-manager` are current as of 2026-05-29; future
+  refactors that break the symmetry without an ADR would be drift
+  visible against this page.
 
 ## Links
 

@@ -18,6 +18,7 @@ used_by:
   - projects/dependency-manager/adr/0002-adopt-functional-domain-design.md
   - projects/tagless/adr/0001-adopt-functional-domain-design.md
   - projects/shapesdsl/adr/0001-adopt-functional-domain-design.md
+  - projects/animdsl/adr/0001-adopt-functional-domain-design.md
 promoted_from: []
 sources:
   - sources/summaries/introduction_to_functional_design_john_de_goes.md
@@ -240,17 +241,173 @@ form.
 
 ## Adopters
 
-Two project ADRs currently cite this page, with distinct shapes:
+Six project ADRs currently cite this page, all with the declarative
+encoding:
 
 | Project | ADR | Stance | Notes |
 |---------|-----|--------|-------|
 | compositor | [[projects/compositor/adr/0001-adopt-functional-domain-design]] | Adopts with one deviation | Deviation on allocation semantics — interpreters must allocate only from arena / per-frame scratch, never from the GC heap. Default encoding **declarative** for pipeline domains, **executable** only where wrapping opaque wlroots/libinput callbacks leaves no clean declarative shape. |
-| sourceline-manager | [[projects/sourceline-manager/adr/0001-adopt-functional-domain-design]] | Adopts unconditionally | Declarative encoding throughout. Reference implementation — `Token` / `SourceLine` / `SourceFile` ADT with monoid laws tested as part of the public contract; in-tree ADRs at `/p/hg/sourceline-manager/docs/adr/0001..0002` cited as direct evidence. |
+| sourceline-manager | [[projects/sourceline-manager/adr/0001-adopt-functional-domain-design]] | Adopts unconditionally | Declarative encoding throughout. Reference implementation — `Token` / `SourceLine` / `SourceFile` ADT with monoid laws tested as part of the public contract. |
+| toolbox | [[projects/toolbox/adr/0001-adopt-functional-domain-design]] | Adopts unconditionally | Multi-module realisation across 10 modules; `enum Cmd`, `enum Pipeline`, `enum ProcessDescription`, `VirtualFileSystem`. Effects confined to the `proc-*` interpreter family; algebra modules carry no effect machinery. |
+| dependency-manager | [[projects/dependency-manager/adr/0002-adopt-functional-domain-design]] | Adopts unconditionally | Two worked layers — `dm.catalog` (data: `Coord`/`Library`/`Catalog`) + `dm.mill` (subprocess DSL: `Mill.Cwd`/`Invocation`). One catalog model + N format interpreters (TOML/YAML/Dependencies.mill). |
+| tagless | [[projects/tagless/adr/0001-adopt-functional-domain-design]] | Adopts unconditionally | Type-safe HTML DSL family — 14 modules with phantom-typed cursor algebra (`Cursor[D <: Depth, K <: ElementKind]`) and type-state grammars (`Form[S <: FormState]`, `Table[S <: TableState]`). Compile-time-validated builder transitions. |
+| shapesdsl | [[projects/shapesdsl/adr/0001-adopt-functional-domain-design]] | Adopts unconditionally | `enum Shape`, `final case class Heatmap`, `ShapeScene` ADT; pure builders; total `toSvg` / `toPng` / `toScene` interpreters. Cross-repo SNAPSHOT consumer of `tagless-core`. |
 
-The orthogonal-shape distribution (deviation-bearing real-time
-system + clean foundation library) is intended as the baseline for
-detecting future drift: a new adopter that fits neither shape
-without explanation is a signal worth a synthesis.
+In-scope project still missing a stance: **safetensors-scala** (see
+[[meta/drift]] §DRIFT-024).
+
+The six realisations span four orthogonal shapes — real-time
+allocation-constrained system (compositor), foundation algebra with
+laws (sourceline-manager), multi-module process/effects family
+(toolbox), data+DSL twin algebras (dependency-manager), phantom-typed
+cursor + type-state grammar (tagless / shapesdsl). A future adopter
+that fits none of these shapes without explanation is a signal worth
+a synthesis.
+
+## Conformance
+
+verifiability: medium
+verifiability_rationale: |
+  Structural signals (immutability, ADT encoding, presence of
+  composable operators) are mechanically detectable in source.
+  Whether the model *describes* vs *does*, and whether interpreters
+  are properly separated, requires reading code to judge — that's
+  the soft-signal half. A purely structural verdict over-rates
+  shape adherence; a purely judgement-based verdict under-uses
+  cheap mechanical signals. Both halves are needed.
+
+hard_signals:
+  - id: no-var-in-domain
+    name: No `var` declarations in domain code
+    method: grep
+    pattern: '\bvar\s+\w+\s*[:=]'
+    scope: 'src/main/scala/**/{domain,model,algebra}/**.scala'
+    verdict_on_match: violation
+    rationale: |
+      FDD's first principle is an immutable data type. `var` in the
+      domain layer breaks the "describes, doesn't do" stance even
+      when surrounded by case classes.
+
+  - id: adt-encoding-present
+    name: Domain code uses case class / enum / sealed trait
+    method: grep
+    pattern: '(?m)^\s*(?:final\s+)?(?:case\s+class|enum|sealed\s+trait)\b'
+    scope: 'src/main/scala/**/{domain,model,algebra}/**.scala'
+    verdict_on_match: evidence
+    rationale: |
+      FDD requires an immutable data type. Without at least one ADT
+      constructor in the domain layer the pattern isn't realised at
+      all. Count and listing of matches is part of the report row.
+
+  - id: composable-operators-present
+    name: Operators on the domain ADT that combine values
+    method: grep
+    pattern: 'def\s+(&&|\|\||andThen|orElse|unary_!|map|flatMap|combine)\b'
+    scope: 'src/main/scala/**/{domain,model,algebra}/**.scala'
+    verdict_on_match: evidence
+    rationale: |
+      Composability is the third pillar. Absence of these names
+      isn't conclusive (operators may be named differently per
+      domain), but presence is strong positive evidence.
+
+  - id: no-runtime-effects-in-algebra
+    name: No effect-type signatures in the domain layer
+    method: grep
+    pattern: '\b(?:IO|Future|Kyo|Async|Resource)\s*\['
+    scope: 'src/main/scala/**/{domain,model,algebra}/**.scala'
+    verdict_on_match: violation
+    rationale: |
+      The algebra is meant to be pure data. Effects belong in
+      interpreters. Leaking effect type constructors into the
+      domain types couples description and execution — explicitly
+      the failure mode this pattern exists to prevent.
+
+soft_signals:
+  - id: describes-not-does
+    name: Encoding is consistent (declarative or executable, not drifting)
+    prompt: |
+      Inspect the ADTs in the project's domain layer (scope below).
+      Decide which encoding the project uses:
+        - declarative: constructors store their arguments as data
+          (`enum` / sealed-trait variants holding fields); execution
+          happens in separate `match` interpreters.
+        - executable: case classes store functions (`val matches: A => B`);
+          constructors return values that already know how to execute.
+        - mixed: the same model uses both shapes inconsistently.
+        - neither: no recognisable encoding — methods execute IO
+          directly without an intermediate data shape.
+      Cite 2-3 file:line pairs supporting the verdict.
+    verdict_kinds: [declarative, executable, mixed, neither, unclear]
+    scope: 'src/main/scala/**/{domain,model,algebra}/**.scala'
+    rationale: |
+      Either pure encoding is FDD-compliant. Drift between them
+      within one model is the violation worth catching — and is
+      what a grep can't see.
+
+  - id: interpreter-separation
+    name: Interpreter is a distinct site, not baked into the model
+    prompt: |
+      Find where the domain ADT is *consumed* — the code that
+      pattern-matches it and produces an outcome (rendering, IO,
+      a computed value). Is the interpreter a clearly separate
+      module / file / object? Or are the operations baked into
+      the model (methods on the ADT that immediately execute)?
+      Cite the interpreter file(s) or, if baked-in, an example
+      method whose body performs effects.
+    verdict_kinds: [separated, baked-in, mixed, no-interpreter-found, unclear]
+    scope: 'src/main/scala/**'
+    rationale: |
+      "Model describes, interpreter executes" is the structural
+      consequence of the pattern. Baked-in operations indicate a
+      partial / drifting adoption.
+
+classification:
+  adopts: |
+    All hard signals pass (no `var` in domain; ADTs present;
+    operators present; no effect types in algebra). Soft signals
+    return `describes-not-does ∈ {declarative, executable}` AND
+    `interpreter-separation = separated`.
+  adopts_with_exceptions: |
+    All hard signals pass OR one violation pinned to a named
+    file/module (e.g. `var` in a single Buffer.scala for arena
+    reuse). Soft signals positive overall. Exceptions list the
+    pinned spots with file paths and rationale.
+  deviates: |
+    Project consistently uses a non-FDD shape — e.g. classes whose
+    methods directly execute IO with no intermediate data model.
+    Hard signals fail consistently; soft signals return `neither`
+    or `baked-in`.
+  ignores: |
+    Project's language stack falls outside applies_to (e.g. a
+    Nix-only project; covered by excludes). Pattern-specific
+    additional case: project is a pure thin wrapper around an
+    external API with no domain modelling of its own.
+
+adr_template: |
+  ## Context
+
+  {project} models {evidence_summary.adts_named_top_3} in
+  {evidence_summary.domain_paths}. The encoding observed is
+  {soft.describes_not_does}; interpreters live in
+  {soft.interpreter_locations}.
+
+  ## Decision
+
+  {project} adopts [[tech/patterns/functional-domain-design]]
+  with the {soft.describes_not_does} encoding.
+  {if exceptions: "One exception: {exceptions[0].file}
+  ({exceptions[0].rationale})."}
+
+  ## Consequences
+
+  - The domain layer remains testable without IO.
+  - Adding a new interpreter is {free if declarative else "touches every constructor"}.
+  - Adding a new constructor is {free if executable else "touches every interpreter"}.
+
+  ## Links
+
+  - [[tech/patterns/functional-domain-design]]
+  - Evidence: {evidence_summary.citations}
 
 ## Open Questions / Drift Signals
 
@@ -262,14 +419,13 @@ without explanation is a signal worth a synthesis.
   `tech/patterns/functional-domain-layering.md` is a standing
   candidate, awaiting either a second corroborating source or a
   project synthesis (per `POLICY.md`).
-- **Property-based / law-based testing as a peer to example-based
-  TDD.** `sourceline-manager` already practises monoid-law testing as
-  part of its public contract. A project synthesis from that practice
-  would satisfy POLICY's "second source or project synthesis"
-  condition for adding PBT as a first-class peer to TDD's
-  example-based discipline — relevant to the
-  `tech/patterns/tdd-rhythm` candidate flagged in
-  [[meta/drift]] §DRIFT-015h.
+- **PBT-as-peer realised, recorded elsewhere.** The 2026-05-29
+  promotion of [[tech/patterns/tdd-rhythm]] (confidence `high`) and
+  [[tech/patterns/test-economics]] (confidence `high`) closed the
+  prior PBT-as-peer question against the
+  `sourceline-manager` `MonoidLawsSuite[A]` realisation. The two
+  pages now carry the law-based-as-peer position explicitly; nothing
+  for FDD-the-page to add.
 
 ## Links
 

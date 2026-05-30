@@ -29,6 +29,7 @@ Cross-project knowledge: decisions, patterns, architecture, stack, capabilities,
 
 | Project | Status | Stack | Description |
 |---------|--------|-------|-------------|
+| animdsl | active | Scala 3 (JVM/JS), Mill | Declarative animation DSL with SVG/SMIL + OOXML backends (3 modules: `core` / `svg` / `ooxml`); both backends consume `tagless-core` |
 | compositor | active (design-stage) | Scala Native, Kyo, Wayland, wlroots | Wayland compositor |
 | sourceline-manager | active | Scala 3 (JVM/JS/Native), Mill | Foundation library: source code as a typed value algebra |
 | safetensors-scala | active | Scala 3 (JVM/JS/Native), Mill, scodec | Foundation library: HuggingFace SafeTensors format reader |
@@ -36,7 +37,7 @@ Cross-project knowledge: decisions, patterns, architecture, stack, capabilities,
 | tagless | active | Scala 3 (JVM/JS), Mill, raquo/domtypes, Airstream | Type-safe HTML DSL family (14 modules: `htmlid` / `core` / `i18n` / `md` / `meta` / `page` / `form` / `table` / `crud` / `route` / `viz` / `htmx` / `svg` / `events`) |
 | toolbox | active | Scala 3 (JVM/JS/Native), Mill, Kyo, fs2, os-lib | Composable shell pipelines + platform-agnostic process execution (10 modules: `core` / `fluent` / `script` / `proc` + four `proc-*` interpreters / `vfs` / `example`) |
 | dependency-manager | active (v1 shipped) | Scala 3 (JVM), Mill, toolbox, toml-scala, scala-yaml | Private build-tooling CLI (`dm`) — centralised TOML+YAML dependency catalog for `/p/hg/` repos; regenerates per-project `deps/Dependencies.mill`. All 3 v1 consumers migrated (toolbox/slm/safetensors-scala); first commits landed on `main` |
-| deploymentbox | active (design-stage v2; pre-deploy) | NixOS, flake, microvm.nix, Firecracker, MinIO, openssh, gnupg | Hardened Hetzner Cloud host that publishes signed `no.virtual-architect` Maven Central artifacts. Build runs inside a Firecracker microVM; host downloads artifacts from a local MinIO bucket, verifies SHA-256, signs with YubiKey via forwarded gpg-agent — signing key never on the host *or* the microVM |
+| deploymentbox | active (v3 accepted; pre-first-release) | GitHub Actions, sigstore attestation, Nix (per-lib flake), gpg + YubiKey, Sonatype Central Portal | Publishing pipeline for signed `no.virtual-architect` Maven Central artifacts. v3 (public-OSS path): GitHub Actions builds with `actions/attest-build-provenance`; operator downloads to laptop, verifies attestation + SHA, signs locally with YubiKey, uploads to Central, re-verifies on a clean machine. v1 (host-builds-directly) and v2 (Firecracker microVM + MinIO on Hetzner) preserved as historical record — v2 remains the starting point for any future private-artifact pipeline |
 | webapp | planned | Scala 3, Kyo, Tapir, PostgreSQL | Web application |
 | cli-tool | planned | Scala 3, Kyo, SQLite | CLI utility |
 | infra | planned | NixOS, PostgreSQL, Envoy | Infrastructure configs |

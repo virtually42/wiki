@@ -7,6 +7,288 @@ events live in `projects/<name>/log.md`.
 
 ---
 
+## [2026-05-30] session | `conform` operation — foundation laid for evidence-based normative compliance
+
+DRIFT-024 (the 17-cell project × pattern fan-out backlog from
+2026-05-29's four-pattern promotion sweep) framed the question:
+manual ADR fan-out is the wrong abstraction at this scale. Operator
+agreed; design conversation produced an evidence-based alternative
+that flips the wiki's compliance epistemology — from *assertion*
+("a human writes an ADR claiming we adopt X") to *evidence*
+("the code is inspected; an ADR draft is derived"). Operator
+explicitly chose foundations-first sequencing with visualization
+deferred to a later stage.
+
+The operation:
+
+- New top-level wiki op `conform [<project>] [<pattern>]` alongside
+  `lint`. Reads each normative page's new `## Conformance` block
+  (hard signals = grep/AST/metric/shell; soft signals = LLM-evaluated
+  prompts), runs them against a project's source, classifies a
+  stance (adopts / adopts+exceptions / deviates / ignores) with
+  confidence, drafts an ADR matching the existing
+  `compliance:` schema, and (on re-runs) detects regression where
+  code has drifted from declared stance.
+- Drafts land in `projects/*/adr/drafts/` (new llm-owned sub-tree);
+  humans review and move accepted drafts into `projects/*/adr/`
+  where ownership becomes shared per [[meta/ownership]].
+- Report at `meta/conformance.md`, regenerated each run, same role
+  as [[meta/drift]].
+
+Foundation deliverables created this session:
+
+- `tech/guides/conformance.md` — full operation spec (kind:
+  descriptive, status: draft). Mirrors
+  [[tech/guides/breakout]]'s phase-by-phase structure.
+- `CLAUDE.md` — `conform` registered in §Knowledge Operations
+  alongside `lint`. (Shared-owned edit; flagged for review.)
+- `tech/patterns/functional-domain-design.md` — first `##
+  Conformance` block, exercising the schema with 4 hard signals
+  (no-var-in-domain, adt-encoding-present, composable-operators-present,
+  no-runtime-effects-in-algebra) + 2 soft signals (describes-not-does,
+  interpreter-separation) + classification rubric + adr_template.
+  Chosen as the highest-verifiability `medium`-rated pattern to
+  validate the schema with realistic shape.
+- `fix/apply-conformance-schema.py` — idempotent fix script
+  proposing additions to two human-owned files:
+  - `meta/schema.md` § new `## Conformance Block` section
+    describing the fingerprint schema and verifiability ratings.
+  - `meta/ownership.md` — adds rows for `meta/conformance.md`
+    (llm) and `projects/*/adr/drafts/**` (llm), plus matching
+    rationale paragraphs.
+
+Sequencing plan (recorded in the guide §Sequencing Strategy):
+
+1. Stage 0 (done) — guide + schema + first conformance block.
+2. Stage 1 — FDD × toolbox baseline. Run the FDD fingerprint
+   (by hand, in-context first) against `/p/hg/toolbox`; verify
+   the output matches the existing
+   `projects/toolbox/adr/0001-adopt-functional-domain-design.md`.
+   This is the **validation case** before any automation.
+3. Stage 2 — `deps-single-file` (highest verifiability).
+4. Stage 3 — `symmetric-refactoring` + `test-economics`.
+5. Stage 4 — `tdd-rhythm` (honest `low` verifiability).
+6. Stage 5 — visualization tooling.
+
+Human-gated:
+
+- Run `python3 fix/apply-conformance-schema.py` to land the
+  schema + ownership additions (or reject and ask for revisions).
+- Review the new `conform` entry in CLAUDE.md.
+- Review the FDD conformance block; tune hard-signal globs /
+  regexes if they over-fire against any existing project.
+
+Cross-references for [[meta/drift]] next run:
+- DRIFT-024 should annotate that a structural alternative is in
+  Stage 0; cells remain open until conform runs and produces
+  drafts, but the *expected resolution path* is no longer 17
+  hand-drafted ADRs.
+- A new finding may surface: a normative page with no `##
+  Conformance` block is a soft drift (visible after conform runs;
+  not flagged today).
+
+Refs:
+[[tech/guides/conformance]], [[meta/drift]] §DRIFT-024,
+[[tech/patterns/functional-domain-design]] §Conformance,
+[[POLICY]] §Compliance Contract, [[meta/schema]] §(proposed) Conformance Block,
+`fix/apply-conformance-schema.py`.
+
+---
+
+## [2026-05-30] adr | deploymentbox v3 — GitHub Actions + sigstore attestation supersedes v2 microVM substrate for public OSS
+
+Day after v2 landed, the operator re-framed the question: could a
+much simpler "let GitHub build, download to laptop, sign, upload,
+re-verify on clean machine" path match v2's security? Answer in
+conversation: yes for **public OSS specifically**, *if* the bare
+SHA-from-GitHub is replaced with sigstore-signed build provenance
+attestation (`actions/attest-build-provenance`, GA 2024). The
+attestation binds artifact → source commit SHA → workflow run in
+a public transparency log via GitHub's OIDC identity. That's SLSA
+Build L3 — stronger provenance than v2's bare SHA-256 manifest.
+
+With attestations in scope, the trade-off net-favors v3 for public
+OSS: €0/mo (saves €7-8/mo Hetzner line), zero host maintenance,
+public reproducibility, no SSH-forwarding ceremony, signing key
+responses never leave the laptop USB bus. The single new trust
+delta — GitHub Actions infrastructure — is small relative to
+"GitHub already hosts the source." Clean-machine re-verify
+(`gpg --verify` + `sha256sum` re-check +
+`gh attestation verify` against Central-served bytes) is the
+trust-but-verify capstone.
+
+**Scope is explicitly public-OSS-only.** Any future private
+`no.virtual-architect` artifact must reach for a v2-shaped
+self-managed pipeline; v3 does not extend. The v2 design + ADRs
+0001/0005/0006 are preserved with `status: superseded` specifically
+so they remain a starting point.
+
+Created:
+
+- `projects/deploymentbox/designs/release-pipeline-v3-github-attested.md`
+- `projects/deploymentbox/adr/0007-build-on-github-with-attestations.md`
+  (load-bearing v3 decision; supersedes 0001 / 0002 / 0003 / 0005 / 0006)
+
+Marked superseded:
+
+- v2 design + ADRs 0001 / 0002 / 0003 / 0005 / 0006 (frontmatter
+  `status: superseded`, `superseded_by:` pointing to 0007 / v3 design)
+
+Unchanged:
+
+- ADR-0004 (tag-driven, one key, no snapshots, groupId
+  `no.virtual-architect`, Central Portal endpoint) — carries over
+  to v3 intact.
+
+Updated:
+
+- `projects/deploymentbox/index.md` — rewritten for v3.
+- `projects/deploymentbox/wip.md` — overwritten with v3 blockers
+  (namespace TXT still pending; first library `release.yml`,
+  operator-side release script, `/p/hg/deploymentbox/` disposition).
+- `index.md` (top-level) — deploymentbox row updated for v3 stack.
+
+Two design pivots in 24 hours (v1→v2 yesterday, v2→v3 today). The
+wiki's preserve-superseded pattern keeps the reasoning trail intact
+across both — six superseded ADRs vs two accepted ones, but
+fully reconstructible. ADR-0007 §Context explicitly narrates *why*
+ADR-0001's GitHub-runner rejection aged out (Volpe pattern fixes
+toolchain pinning; sigstore separates build from sign so
+Secrets-only-key-custody is no longer the only path).
+
+First wiki use of sigstore / SLSA / build-attestation primitives.
+Nothing in `tech/decisions/` or `tech/patterns/` covers them yet.
+Promotion candidate (premature today) would be something like
+`tech/patterns/ci-attested-local-signed-release.md` if a second
+distribution path (npm, container registries) ever adopts the
+same shape.
+
+Refs:
+[[projects/deploymentbox/designs/release-pipeline-v3-github-attested]],
+[[projects/deploymentbox/adr/0007-build-on-github-with-attestations]],
+[[projects/deploymentbox/log]] (full session entry),
+[[sources/summaries/github_actions_nix_cachix_dhall_gvolpe]]
+(load-bearing for the runner-hermeticity argument).
+
+## [2026-05-30] ingest | animdsl — third of four sibling breakouts from /p/v42/tagless
+
+Executed `breakout` on the animation timeline DSL. Third of the
+four sibling breakouts forecast in the tagless ingest entry. The
+design document at `/p/v42/tagless/animdsl_specification_and_design.md`
+served as the authoritative layout spec — its §6 "Module Layout"
+matches the on-disk structure 1:1.
+
+Destination: `/p/hg/animdsl`. Three modules under
+`no.virtual-architect:animdsl-<kebab>`:
+
+- `core` — Timeline ADT + Prop/Easing/Trigger/Fill/RepeatCount enums + AnimBackend typeclass (no deps)
+- `svg` — SvgBackend (Timeline → tagless Node = SMIL elements); JVM + JS
+- `ooxml` — OoxmlBackend (Timeline → PresentationML `<p:timing>` tree); **JVM only**
+
+Both backends depend on `no.virtual-architect:tagless-core:0.1.0-SNAPSHOT`
+(cross-repo publishLocal — second use of the pattern after shapesdsl).
+
+Created:
+
+- `sources/tmp/animdsl.md` — bridge (uncommitted-tree state)
+- `sources/summaries/animdsl.md` — distilled summary
+- `projects/animdsl/{index, log}.md`
+- `projects/animdsl/adr/0001-adopt-functional-domain-design.md`
+- `projects/animdsl/adr/0002-deviate-deps-single-file.md` (uses the
+  richer deviation schema with rationale / severity / mitigated_by
+  that the user introduced on the tagless/shapesdsl ADRs)
+
+Touched:
+
+- `index.md` §Projects — added animdsl row
+- `tech/patterns/functional-domain-design` — added
+  `projects/animdsl/adr/0001` to `used_by`
+- `tech/decisions/deps-single-file` — added
+  `projects/animdsl/adr/0002` to `used_by` (deviation)
+- `tech/guides/breakout` §Existing Breakouts — added animdsl row
+
+Four observations worth flagging:
+
+1. **Fifth consecutive deviation from
+   [[tech/decisions/deps-single-file]].** sourceline-manager,
+   toolbox-pre-DM, tagless, shapesdsl, animdsl. The carve-out
+   hypothesis is over-determined. Strong recommendation: extend
+   [[tech/decisions/deps-single-file]] with a "fine-grained
+   standalone breakout" exception, marking the five existing
+   per-project deviation ADRs as `superseded` once that lands.
+2. **Cleanest expression of `functional-domain-design` in the
+   family.** `core` is 12 source files of pure ADTs + a typeclass
+   — no phantom types, no type-state, no extension-heavy DSL. Just
+   `enum Timeline`, four orthogonal enums, one `case class KF`, one
+   `opaque type ShapeRef`, one `AnimBackend[A]` typeclass.
+   `projects/animdsl/adr/0001` makes the case that animdsl
+   exercises the *expression-problem inverse* (free to add new
+   interpreters) that the prior worked examples did not exercise as
+   crisply.
+3. **Zero structural code changes during the breakout.** Unlike
+   tagless (3 moves) and shapesdsl (1 move), animdsl had no
+   intra-module cycles in the source. `core` has zero references
+   to `svg` or `ooxml`. The breakout is a pure relocation. This
+   matches the cleanliness expected from a codebase whose layout
+   was designed up-front in the spec document.
+4. **Design doc vs implementation divergences.** The design doc §7
+   recommends `cats-core` (for `NonEmptyList`) and `scala-xml` (for
+   backend output). The actual implementation rolls a tiny in-tree
+   `Nel` and returns `tags.Node` from both backends to share
+   rendering infra with the family. Flagged for a future design-doc
+   refresh.
+
+Build verified: `mill resolve __` ✓, `mill __.compile` ✓ (5 compile
+targets: core+svg × 2 platforms, ooxml × 1), `mill __.fastLinkJS`
+✓, `mill svg.jvm[3.8.3].test.testForked` ✓ (SvgAnimAttrsSpec — the
+only test upstream), `mill __.publishLocal` ✓ (5 artifacts in
+`~/.ivy2/local`).
+
+Remaining sibling breakout: presenter (next).
+
+Refs: [[sources/tmp/animdsl]] · [[sources/summaries/animdsl]] ·
+[[projects/animdsl]] · [[tech/guides/breakout]]
+
+---
+
+## [2026-05-29] lint | second remediation pass — DRIFT-027 / 030 closed + DRIFT-032 partial
+
+Human asked which of the remaining open items the agent could
+close without further input. Three more closed:
+
+- **DRIFT-027**: restructured malformed `deviations:` blocks on
+  `projects/tagless/adr/0002-deviate-deps-single-file.md` and
+  `projects/shapesdsl/adr/0002-deviate-deps-single-file.md` from
+  bare-path lists to the schema-mandated
+  `{page, rationale, severity, mitigated_by}` shape. Content
+  lifted from each ADR's existing §Context + §Decision body
+  sections — no new claims, no severity escalation (`low` to
+  match siblings). The breakout template that produced the
+  malformation should be patched in `tech/guides/breakout.md` so
+  future breakouts don't reintroduce the bug; not done this pass.
+- **DRIFT-030**: refreshed §Adopters / §Open Questions prose on
+  three pattern pages. FDD's §Adopters table grew from 2 rows to
+  6 with shape characterisations per project; safetensors-scala
+  is now named as the in-scope missing-stance project.
+  `tdd-rhythm.md` and `symmetric-refactoring.md` §"Open Questions"
+  first bullets replaced "X and Y are in scope; both lack adoption
+  ADRs" framings with the actual adoption matrix and DRIFT-024
+  cross-links. `symmetric-refactoring.md` also picked up a new
+  bullet noting the operator-layer vs parallel-module form
+  distinction (dm being the single data point for the latter).
+- **DRIFT-032 partial**: top-level `index.md` already carries a
+  `shapesdsl` row (added between lint sweeps); only the `git add`
+  for the three untracked paths remains.
+
+Open count drops from 8 to 6. Active mechanical work: **none**.
+Remaining open items are all human-gated (DRIFT-024 ADR
+sequencing, DRIFT-028 wiki-shape promotion-vs-rewrite call,
+DRIFT-032 git-add) or carryover-by-design (DRIFT-013 / 014 / 015).
+
+Refs: [[meta/drift]]
+
+---
+
 ## [2026-05-29] lint | mechanical remediation — DRIFT-025 / 026 / 031 closed
 
 Human-requested follow-up to the lint sweep below. Three

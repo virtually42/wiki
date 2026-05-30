@@ -51,12 +51,12 @@ to remediate, override, or accept.
 | DRIFT-024 | missing-declaration | medium | **open** (new — post-promotion fan-out across 7 projects × 4 patterns) |
 | DRIFT-025 | stale-index-annotation | low | ~~resolved 2026-05-29~~ — `(draft)` annotation removed from `tech/index.md` |
 | DRIFT-026 | invalid-kind | low | ~~resolved 2026-05-29~~ — `kind: design-doc` → `kind: descriptive` on `dm-architecture-2026q2-refresh.md` |
-| DRIFT-027 | malformed-compliance | low | **open** (new — tagless ADR-0002 + shapesdsl ADR-0002 have bare-path `deviations:`; schema requires `{page, rationale, severity, mitigated_by}`) |
+| DRIFT-027 | malformed-compliance | low | ~~resolved 2026-05-29~~ — `deviations:` restructured to `{page, rationale, severity, mitigated_by}` on tagless/0002 + shapesdsl/0002 |
 | DRIFT-028 | wrong-kind-adoption | medium | **open** (new — deploymentbox ADR-0006 `adopts` a `descriptive` source summary; POLICY requires `adopts` targets to be `kind: normative status: accepted`) |
 | DRIFT-029 | non-schema-compliance-fields | low | **open** (new — deploymentbox ADR-0006 uses `layer:` keys instead of `page:` in `exceptions:` / `deviations:`; related to DRIFT-028) |
-| DRIFT-030 | stale-page-content | low | **open** (new — `tdd-rhythm.md`, `symmetric-refactoring.md`, `functional-domain-design.md` carry "Adopters" / "Open Questions" prose that pre-dates current `used_by` reality) |
+| DRIFT-030 | stale-page-content | low | ~~resolved 2026-05-29~~ — §Adopters / §Open Questions refreshed on FDD + tdd-rhythm + symmetric-refactoring |
 | DRIFT-031 | missing-back-reference | low | ~~resolved 2026-05-29~~ — shapesdsl/0001 added to `functional-domain-design` `used_by`; shapesdsl/0002 added to `deps-single-file` `used_by` |
-| DRIFT-032 | untracked-project | informational | **open** (new — `projects/shapesdsl/`, `sources/tmp/shapesdsl.md`, `sources/summaries/shapesdsl.md` exist on disk but are untracked in git; not in top-level `index.md`) |
+| DRIFT-032 | untracked-project | informational | **partially open** (index.md row already present; `git add` for three untracked paths remains) |
 
 **Bidirectional integrity check** for the deps-single-file
 sub-graph after this run:
@@ -245,50 +245,19 @@ All design docs on disk now use `kind: descriptive`.
 
 ---
 
-## DRIFT-027 — malformed-compliance — NEW
+## ~~DRIFT-027~~ — malformed-compliance — RESOLVED 2026-05-29
 
 **Category**: malformed-compliance
 **Severity**: low
-**Subjects**:
-- `projects/tagless/adr/0002-deviate-deps-single-file.md`
-- `projects/shapesdsl/adr/0002-deviate-deps-single-file.md`
+**Status**: **resolved** 2026-05-29
 
-Both ADRs declare:
-
-```yaml
-compliance:
-  deviations:
-    - tech/decisions/deps-single-file.md
-```
-
-Per `POLICY.md` §"Compliance Contract" → §"Categories" → "Required
-fields", a `deviations` entry must be a mapping with `page`,
-`rationale`, `severity`, and `mitigated_by`. The bare-path form is
-indistinguishable in schema from an `adopts` list entry and carries
-no rationale.
-
-Both pages **do** explain the deviation in their narrative body
-sections (the `## Context` and `## Decision` sections contain the
-rationale, expiry conditions, and analogues to the other deviating
-projects). The drift is purely a frontmatter shape issue — the
-content is sound.
-
-### Remediation
-
-Restructure each `deviations:` entry to:
-
-```yaml
-deviations:
-  - page: tech/decisions/deps-single-file.md
-    rationale: |
-      <copy the body §Context + §Decision deviation paragraph>
-    severity: low      # match sibling slm/0002 / toolbox/0002
-    mitigated_by: |
-      <expiry conditions from body §Decision>
-```
-
-Both pages are `shared`-owned. Drafting can be done from the
-existing body without inventing facts.
+Both `projects/tagless/adr/0002-deviate-deps-single-file.md` and
+`projects/shapesdsl/adr/0002-deviate-deps-single-file.md`
+`deviations:` blocks restructured to the schema shape
+(`page` / `rationale` / `severity` / `mitigated_by`). Severity
+`low` on both, matching the sibling `slm/0002` and `toolbox/0002`
+deviations. Content lifted from existing §Context + §Decision
+body sections — no new claims.
 
 ---
 
@@ -367,28 +336,28 @@ Closes when DRIFT-028 closes.
 
 ---
 
-## DRIFT-030 — stale-page-content — NEW
+## ~~DRIFT-030~~ — stale-page-content — RESOLVED 2026-05-29
 
 **Category**: stale-page-content
 **Severity**: low
-**Subjects**: three normative pattern pages.
+**Status**: **resolved** 2026-05-29
 
-| Page | Stale section | Detail |
-|---|---|---|
-| `tech/patterns/functional-domain-design.md` | §"Adopters" table | Lists 2 projects (compositor + sourceline-manager); `used_by` lists 5 (now should be 6 with shapesdsl). The narrative claim "Two project ADRs currently cite this page, with distinct shapes" is out of date. |
-| `tech/patterns/tdd-rhythm.md` | §"Open Questions / Drift Signals" first bullet | "compositor and sourceline-manager are in scope. Both lack adoption ADRs today" — sourceline-manager and dm both adopt; toolbox, safetensors-scala, tagless, shapesdsl + compositor are the actual missing cells. |
-| `tech/patterns/symmetric-refactoring.md` | §"Open Questions / Drift Signals" first bullet | "sourceline-manager's synthesis evidence is already strong; an adopts ADR is a short follow-up" — sourceline-manager + dm both adopt; the remaining cells are toolbox + safetensors-scala + tagless + shapesdsl + compositor. |
+Three normative pattern pages refreshed:
 
-All three are wiki-side narrative drift, not coherence violations.
-Pages are `llm`-owned (`tech/patterns/**`). The fix is a localised
-prose update per page; no structural restructuring needed.
-
-### Remediation
-
-Either refresh in-place (rewrite each §Adopters / §Open Questions
-paragraph against the current `used_by` and DRIFT-024 matrix), or
-defer until the DRIFT-024 fan-out is largely closed — at which
-point the prose can be rewritten from a more stable state.
+- `tech/patterns/functional-domain-design.md` §"Adopters" — table
+  expanded from 2 rows to 6 (compositor, slm, toolbox, dm, tagless,
+  shapesdsl), each with a one-line shape characterisation.
+  Safetensors-scala called out as the in-scope project still
+  missing a stance (cross-link to DRIFT-024). Closing paragraph
+  reframed around four orthogonal realisation shapes.
+- `tech/patterns/tdd-rhythm.md` §"Open Questions / Drift Signals"
+  first bullet — replaced "compositor and sourceline-manager are
+  in scope; both lack adoption ADRs" with the current adoption
+  matrix (2 adopt, 5 missing), cross-linked to DRIFT-024.
+- `tech/patterns/symmetric-refactoring.md` §"Open Questions / Drift
+  Signals" first bullet — same refresh, plus a new bullet noting
+  the operator-layer vs parallel-module distinction surfaced by
+  dm's adoption (potential future page split).
 
 ---
 
@@ -510,14 +479,16 @@ closure log. No carryover from this entry.
 
 ## Notes for Human
 
-- **Open items: 8** after the mechanical remediation pass (4
-  carryover — DRIFT-013 / 014 / 015 / 020; 4 new — DRIFT-024 /
-  027 / 028 / 030; 2 informational — DRIFT-029 (consequential) /
-  032). DRIFT-020 is superseded by DRIFT-024, so the active-cell
-  count is effectively 6 + the 17-cell matrix.
-- **Closed in remediation pass (2026-05-29)**: DRIFT-025
-  (test-economics annotation), DRIFT-026 (`kind: design-doc`),
-  DRIFT-031 (shapesdsl `used_by` back-references).
+- **Open items: 6** after the second remediation pass (4 carryover
+  — DRIFT-013 / 014 / 015 / 020; 2 new — DRIFT-024 / 028; plus
+  consequential DRIFT-029 and informational DRIFT-032). DRIFT-020
+  is superseded by DRIFT-024, so the active count is effectively
+  4 + the 17-cell matrix.
+- **Closed in remediation pass (2026-05-29)**: DRIFT-025 (annotation
+  fix), DRIFT-026 (`kind: design-doc` fix), DRIFT-031 (shapesdsl
+  back-references), DRIFT-027 (malformed `deviations:` restructure
+  on tagless/0002 + shapesdsl/0002), DRIFT-030 (stale prose refresh
+  on FDD + tdd-rhythm + symmetric-refactoring).
 - **What this run did**:
   - Inventoried 8 on-disk projects + 6 accepted normative pages
     (deps-single-file + 4 patterns).
@@ -547,14 +518,10 @@ closure log. No carryover from this entry.
     second NixOS hardening consumer is expected.
   - **DRIFT-032 git-tracking**: `git add` the three untracked
     shapesdsl paths and append a `shapesdsl` row to `index.md`.
-- **Mechanical fixes still pending**:
-  - DRIFT-030 (rewrite stale §Adopters / §Open Questions prose
-    on three pattern pages — deferred until DRIFT-024 is largely
-    closed so the rewrite is from a stable state).
-  - DRIFT-027 (restructure `deviations:` frontmatter on tagless
-    ADR-0002 + shapesdsl ADR-0002 from bare path to
-    `{page, rationale, severity, mitigated_by}`; content already
-    in the body, mechanical lift).
+- **Mechanical fixes still pending**: none. All remaining open
+  items are human-gated (DRIFT-024 ADR drafting, DRIFT-028
+  wiki-shape question, DRIFT-032 `git add`) or carryover by
+  design (DRIFT-013 / 014 / 015).
 - **Stays open by design**: DRIFT-013 (informational, descriptive).
 - **No DRIFT-023-style sequenced human-gated work** introduced
   this run.

@@ -2,7 +2,8 @@
 id: deploymentbox-adr-0003
 title: GPG signing key on YubiKey 5, reached via SSH-forwarded gpg-agent
 kind: normative
-status: accepted
+status: superseded
+superseded_by: projects/deploymentbox/adr/0007-build-on-github-with-attestations.md
 project: deploymentbox
 created: 2026-05-29
 compliance:
