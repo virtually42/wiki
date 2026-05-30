@@ -15,6 +15,7 @@ Canonical source for who edits what.
 | `meta/schema.md`              | human     | no        |
 | `meta/ownership.md`           | human     | no        |
 | `meta/drift.md`               | llm       | no        |
+| `meta/conformance.md`         | llm       | no        |
 | `meta/registry.md`            | shared    | no        |
 | `meta/log.md`                 | llm       | no        |
 | `index.md`                    | llm       | no        |
@@ -29,6 +30,7 @@ Canonical source for who edits what.
 | `tech/glossary.md`            | shared    | no        |
 | `projects/*/index.md`         | llm       | no        |
 | `projects/*/adr/**`           | shared    | yes       |
+| `projects/*/adr/drafts/**`    | llm       | no        |
 | `projects/*/designs/**`       | shared    | yes       |
 | `projects/*/plans/**`         | shared    | yes       |
 | `projects/*/tickets/**`       | shared    | yes       |
@@ -79,6 +81,8 @@ ownership_reason: This decision is still in active human deliberation.
 - **sources/raw/ is human**: immutable inputs. The provenance chain depends on this.
 - **projects/*/index.md is llm**: generated from frontmatter. Hand-edits will be lost.
 - **tools/ is human**: executable scripts should not be modified by the agent operating under those scripts.
+- **meta/conformance.md is llm**: mechanical output of the `conform` operation, regenerated each run. Same shape as `meta/drift.md`.
+- **projects/*/adr/drafts/ is llm**: `conform` produces ADR drafts here for human review; humans move accepted drafts to `projects/*/adr/` (where they become `shared`).
 - **scratch/ is human**: personal working notes. Agent reads if asked, never writes, lint never enforces — outside the schema by design.
 - **wip.md (top-level and projects/*/wip.md) is llm**: session handoff state, overwritten each session. Like `log.md`, hand-edits will be lost on next `wip` invocation.
 

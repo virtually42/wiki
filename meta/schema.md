@@ -608,6 +608,88 @@ or ignore the page in an ADR.
 
 ---
 
+## Conformance Block
+
+Normative pages (`tech/decisions/`, `tech/patterns/`, anti-patterns)
+may carry an optional `## Conformance` section consumed by the
+`conform` operation. Pages without one are skipped and surfaced as
+"no fingerprint" in `meta/conformance.md`.
+
+```yaml
+## Conformance
+
+verifiability: high | medium | low
+verifiability_rationale: |
+  One paragraph explaining what can and can't be mechanically
+  verified for this pattern, and why.
+
+hard_signals:
+  - id: <kebab-id>                     # stable, unique within the page
+    name: <one-line description>
+    method: grep | ast | metric | shell
+    # method-specific fields:
+    pattern: <regex>                   # for method: grep
+    rule: <ruleName>                   # for method: ast (Scalafix)
+    config: { ... }                    # for method: ast
+    measure: <name>                    # for method: metric
+    threshold: { op: gte|lte|eq, value: <n> }   # for method: metric
+    script: <path>                     # for method: shell — under tools/conformance/<pattern-id>/
+    # common fields:
+    scope: <glob>                      # default: project root
+    verdict_on_match: violation | evidence
+    rationale: <one-line why>
+
+soft_signals:
+  - id: <kebab-id>
+    name: <one-line description>
+    prompt: |
+      Instructions for the evaluator. Should describe what evidence
+      to look for and how to decide between verdict kinds.
+    verdict_kinds: [present, partial, absent, unclear]
+    scope: <glob>                      # default: project root
+    rationale: <one-line why>
+
+classification:
+  adopts: |
+    Conditions on signal outcomes that indicate full adoption.
+  adopts_with_exceptions: |
+    Conditions that indicate partial adoption with localized gaps.
+  deviates: |
+    Conditions that indicate a consistent alternative shape.
+  ignores: |
+    Conditions under which the pattern is out of scope for the project.
+
+adr_template: |
+  Optional. A per-pattern §Context / §Decision skeleton that
+  generated drafts reuse, with placeholders like {project} and
+  {evidence_summary}.
+```
+
+### Verifiability ratings
+
+| Rating | Meaning | Typical patterns |
+|--------|---------|------------------|
+| `high` | Structural, mechanically decidable | `deps-single-file`, ADT-encoding shape |
+| `medium` | Mechanical signals + soft judgement | `functional-domain-design`, `test-economics` |
+| `low` | Process-not-artifact; weak code signals | `tdd-rhythm`, `symmetric-refactoring` |
+
+A `low` rating with no soft signals means the pattern is not
+mechanizable today — record this honestly rather than faking
+high verifiability.
+
+### Fingerprint storage
+
+- `grep` and `metric` signals are inline in the page.
+- `ast` signals reference Scalafix rule names; implementations live
+  under `tools/conformance/<pattern-id>/scalafix/`.
+- `shell` signals reference scripts under
+  `tools/conformance/<pattern-id>/` returning JSON on stdout:
+  `{"verdict": "...", "evidence": [...], "truncated": false}`.
+
+See [[tech/guides/conformance]] for the full operation specification.
+
+---
+
 ## Promotion Metadata
 
 When a project pattern is promoted to a tech-layer page:
