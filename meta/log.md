@@ -7,6 +7,48 @@ events live in `projects/<name>/log.md`.
 
 ---
 
+## [2026-05-30] adr | Factory monorepo project registered with five accepted ADRs
+
+Two-pass interview (`scratch/interview_about_factory.md` +
+`scratch/interview_about_factory_followup.md`) settled the topology
+for the long-discussed `/factory/` workspace. Project registered at
+`projects/factory/` with `index.md`, design doc, log, and five ADRs
+covering the load-bearing decisions:
+
+- Single-git monorepo at `/factory/` with selective gitignore for
+  `upstream/`, `pub/`, `secrets/`, and `**/out/`. Wiki absorbed via
+  `git subtree`. Personal-repo commit policy applies workspace-wide.
+- Decoupled per-library Mill builds. Root `build.mill` runs
+  cross-cutting jobs only; per-library builds remain standalone.
+- `pub/<lib>` populated by filtered one-way rsync from `hg/<lib>`;
+  `.github/workflows/` explicitly excluded from sync per operator
+  decision. deploymentbox v3 publishes from `pub/`.
+- Fork-first rule for all `upstream/<lib>` external libraries; the
+  current ad-hoc `/p/gh/` mix of forks and clones is replaced by
+  one consistent policy.
+- Secrets adopt deploymentbox YubiKey custody contract; sops at
+  rest, keys live outside `/factory/`.
+
+Two deferred wiki-level open questions move with this:
+
+- `projects/dependency-manager/designs/dm-architecture` open question
+  about `/p/factory/` absorption is **closed** — `dm` stays as a
+  meta-tool per ADR-0002.
+- `projects/deploymentbox/index` "v2 preserved for future
+  private-artifact pipeline" assumption is **unchanged** — factory
+  doesn't alter the publish flow; deploymentbox v3 still applies.
+
+Migration plan, path-rewrite script, and cutover sequence land in a
+forthcoming plan under `projects/factory/plans/`. Wiki references
+to `/p/hg/`, `/p/gh/`, `/p/wiki/`, `/p/v42/` remain valid until
+that cutover.
+
+Refs: [[projects/factory/index]],
+[[projects/factory/designs/factory-monorepo-topology]],
+[[projects/factory/log]]
+
+---
+
 ## [2026-05-30] session | `conform` operation — foundation laid for evidence-based normative compliance
 
 DRIFT-024 (the 17-cell project × pattern fan-out backlog from
